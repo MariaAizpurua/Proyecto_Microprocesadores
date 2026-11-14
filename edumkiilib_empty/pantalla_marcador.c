@@ -19,7 +19,21 @@ static uint8_t contador[2][3];
 static const uint8_t tamano_barco[5]={2,3,3,4,5};
 static uint8_t barcos[2][5];
 
+static void dibujar_casilla_vacia(uint8_t jugador,uint8_t barco,uint8_t pos){
+    int16_t x,y;
 
+    if(jugador==0){
+        x=2+pos*8;
+          }
+    else{
+        x=64+pos*8;
+           }
+    y=62+barco*10;
+
+    Graphics_Rectangle r={x,y,x+5,y+5 };
+    Graphics_drawRectangle(&g_sContext, &r);
+
+}
 void marcador(void){
     Graphics_setForegroundColor(&g_sContext, ClrBlack);
     Graphics_setBackgroundColor(&g_sContext, ClrWhite);
@@ -41,110 +55,14 @@ void marcador(void){
     Graphics_drawString(&g_sContext, (int8_t *)"Hundido:",AUTO_STRING_LENGTH,66,fila1_y+separacion_fila,TRANSPARENT_TEXT);
     Graphics_drawString(&g_sContext, (int8_t *)"Agua:",AUTO_STRING_LENGTH,66,fila1_y+2*separacion_fila,TRANSPARENT_TEXT);
 
-    //Jugador 1 barcos
-    Graphics_Rectangle c0 = {2, 62, 7, 67};
-    Graphics_drawRectangle(&g_sContext, &c0);
-
-    Graphics_Rectangle c1 = {10, 62, 15, 67};
-    Graphics_drawRectangle(&g_sContext, &c1);
-
-    Graphics_Rectangle c2 = {2, 72, 7, 77};
-    Graphics_drawRectangle(&g_sContext, &c2);
-
-    Graphics_Rectangle c3 = {10, 72, 15, 77};
-    Graphics_drawRectangle(&g_sContext, &c3);
-
-    Graphics_Rectangle c4 = {18, 72, 23, 77};
-    Graphics_drawRectangle(&g_sContext, &c4);
-
-    Graphics_Rectangle c5 = {2, 82, 7, 87};
-    Graphics_drawRectangle(&g_sContext, &c5);
-
-    Graphics_Rectangle c6 = {10, 82, 15, 87};
-    Graphics_drawRectangle(&g_sContext, &c6);
-
-    Graphics_Rectangle c7 = {18, 82, 23, 87};
-    Graphics_drawRectangle(&g_sContext, &c7);
-
-    Graphics_Rectangle c8 = {2, 92, 7, 97};
-    Graphics_drawRectangle(&g_sContext, &c8);
-
-    Graphics_Rectangle c9 = {10, 92, 15, 97};
-    Graphics_drawRectangle(&g_sContext, &c9);
-
-    Graphics_Rectangle c10 = {18, 92, 23, 97};
-    Graphics_drawRectangle(&g_sContext, &c10);
-
-    Graphics_Rectangle c11 = {26, 92, 31, 97};
-    Graphics_drawRectangle(&g_sContext, &c11);
-
-    Graphics_Rectangle c12 = {2, 102, 7, 107};
-    Graphics_drawRectangle(&g_sContext, &c12);
-
-    Graphics_Rectangle c13 = {10, 102, 15, 107};
-    Graphics_drawRectangle(&g_sContext, &c13);
-
-    Graphics_Rectangle c14 = {18, 102, 23, 107};
-    Graphics_drawRectangle(&g_sContext, &c14);
-
-    Graphics_Rectangle c15 = {26, 102, 31, 107};
-    Graphics_drawRectangle(&g_sContext, &c15);
-
-    Graphics_Rectangle c16 = {34, 102, 39, 107};
-    Graphics_drawRectangle(&g_sContext, &c16);
-
-    //Jugador 2 barcos
-    Graphics_Rectangle c17 = {64, 62, 69, 67};
-    Graphics_drawRectangle(&g_sContext, &c17);
-
-    Graphics_Rectangle c18 = {72, 62, 77, 67};
-    Graphics_drawRectangle(&g_sContext, &c18);
-
-    Graphics_Rectangle c19 = {64, 72, 69, 77};
-    Graphics_drawRectangle(&g_sContext, &c19);
-
-    Graphics_Rectangle c20 = {72, 72, 77, 77};
-    Graphics_drawRectangle(&g_sContext, &c20);
-
-    Graphics_Rectangle c21 = {80, 72, 85, 77};
-    Graphics_drawRectangle(&g_sContext, &c21);
-
-    Graphics_Rectangle c22 = {64, 82, 69, 87};
-    Graphics_drawRectangle(&g_sContext, &c22);
-
-    Graphics_Rectangle c23 = {72, 82, 77, 87};
-    Graphics_drawRectangle(&g_sContext, &c23);
-
-    Graphics_Rectangle c24 = {80, 82, 85, 87};
-    Graphics_drawRectangle(&g_sContext, &c24);
-
-    Graphics_Rectangle c25 = {64, 92, 69, 97};
-    Graphics_drawRectangle(&g_sContext, &c25);
-
-    Graphics_Rectangle c26 = {72, 92, 77, 97};
-    Graphics_drawRectangle(&g_sContext, &c26);
-
-    Graphics_Rectangle c27 = {80, 92, 85, 97};
-    Graphics_drawRectangle(&g_sContext, &c27);
-
-    Graphics_Rectangle c28 = {88, 92, 93, 97};
-    Graphics_drawRectangle(&g_sContext, &c28);
-
-    Graphics_Rectangle c29 = {64, 102, 69, 107};
-    Graphics_drawRectangle(&g_sContext, &c29);
-
-    Graphics_Rectangle c30 = {72, 102, 77, 107};
-    Graphics_drawRectangle(&g_sContext, &c30);
-
-    Graphics_Rectangle c31 = {80, 102, 85, 107};
-    Graphics_drawRectangle(&g_sContext, &c31);
-
-    Graphics_Rectangle c32 = {88, 102, 93, 107};
-    Graphics_drawRectangle(&g_sContext, &c32);
-
-    Graphics_Rectangle c33 = {96, 102, 101, 107};
-    Graphics_drawRectangle(&g_sContext, &c33);
-
+    uint8_t j, b, p;
+    for (j = 0; j < 2; j++){
+        for (b = 0; b < 5; b++){
+            for (p = 0; p < tamano_barco[b]; p++){
+                dibujar_casilla_vacia(j, b, p);
+            }
+        }
+    }
 
 
 

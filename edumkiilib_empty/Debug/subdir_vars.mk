@@ -9,21 +9,27 @@ CMD_SRCS += \
 ../lnk_msp430fr5994.cmd 
 
 C_SRCS += \
-../main.c 
+../main.c \
+../pantalla_marcador.c 
 
 C_DEPS += \
-./main.d 
+./main.d \
+./pantalla_marcador.d 
 
 OBJS += \
-./main.obj 
+./main.obj \
+./pantalla_marcador.obj 
 
 OBJS__QUOTED += \
-"main.obj" 
+"main.obj" \
+"pantalla_marcador.obj" 
 
 C_DEPS__QUOTED += \
-"main.d" 
+"main.d" \
+"pantalla_marcador.d" 
 
 C_SRCS__QUOTED += \
-"../main.c" 
+"../main.c" \
+"../pantalla_marcador.c" 
 
 
