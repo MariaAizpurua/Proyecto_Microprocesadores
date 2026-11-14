@@ -13,4 +13,6 @@
 	<templateProperties value="id=edumkiilib_empty.projectspec.edumkiilib_empty"/>
 	<origin value="C:\Temp\msp-exp430FR5994-edumkii-sdk\templates\edumkiilib_empty\edumkiilib_empty.projectspec"/>
 	<filesToOpen value=""/>
+	<connection value="common/targetdb/connections/TIMSP430-USB.xml"/>
+	<isTargetManual value="false"/>
 </projectOptions>
