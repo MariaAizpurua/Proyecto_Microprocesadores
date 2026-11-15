@@ -9,7 +9,7 @@
 #define PANTALLA_DRW_H_
 
 
-
+void pantalla11_drw(void);
 
 
 #endif /* PANTALLA_DRW_H_ */
