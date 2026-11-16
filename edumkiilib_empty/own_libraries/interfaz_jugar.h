@@ -12,5 +12,6 @@
 
 void marcar_casillas(uint8_t tablero[10][10], int cuadrante);
 void disparar(uint8_t tablero[10][10]);
+void pantalla11_drw();
 
 #endif /* INTERFAZ_JUGAR_H_ */
