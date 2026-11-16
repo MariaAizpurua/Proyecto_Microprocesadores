@@ -13,6 +13,9 @@ extern volatile bool flag_edumkii_S1;
 //! Equivalent flag for S2 (EDUMKII, P4.2).
 extern volatile bool flag_edumkii_S2;
 
+//Flag for joy_SEL
+extern volatile bool flag_edumkii_SEL;
+
 //*****************************************************************************
 //
 //! \brief Configures the EDUMKII button pins as inputs.
