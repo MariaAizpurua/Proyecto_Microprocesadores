@@ -1,7 +1,5 @@
--vmspx --data_model=restricted --use_hw_mpy=F5 --advice:hw_config=all --define=__MSP430FR5994__ --printf_support=minimal --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU40 -z --heap_size=160 --stack_size=512 --cinit_hold_wdt=on -i"C:/ti/ccs1200/ccs/ccs_base/msp430/include" -i"C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/lib" -i"C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include" -i"C:/ti/ccs1200/ccs/ccs_base/msp430/lib/5xx_6xx_FRxx" -i"C:/ti/ccs1200/ccs/ccs_base/msp430/lib/FR59xx" --priority --reread_libs --warn_sections --use_hw_mpy=F5 --rom_model 
-"./interfaz_jugar.obj"
+-vmspx --data_model=restricted --use_hw_mpy=F5 --advice:hw_config=all --define=__MSP430FR5994__ --printf_support=minimal --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU40 -z --heap_size=160 --stack_size=512 --cinit_hold_wdt=on -i"C:/Users/galbe/Desktop/ccs/ccs_base/msp430/include" -i"C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/lib" -i"C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include" -i"C:/Users/galbe/Desktop/ccs/ccs_base/msp430/lib/5xx_6xx_FRxx" -i"C:/Users/galbe/Desktop/ccs/ccs_base/msp430/lib/FR59xx" --priority --reread_libs --warn_sections --use_hw_mpy=F5 --rom_model 
 "./main.obj"
-"./pantalla_marcador.obj"
 "./_ti_driverlib_2.91.13.01/adc12_b.obj"
 "./_ti_driverlib_2.91.13.01/aes256.obj"
 "./_ti_driverlib_2.91.13.01/comp_e.obj"
@@ -217,6 +215,10 @@
 "./hal/hal_lcd.obj"
 "./hal/hal_pwm.obj"
 "./hal/hal_uart.obj"
+"./own_libraries/Pantalla_drw.obj"
+"./own_libraries/enlace_marcador.obj"
+"./own_libraries/interfaz_jugar.obj"
+"./own_libraries/vista_tablero.obj"
 "../lnk_msp430fr5994.cmd"
 -llibmath.a
 -llibc.a

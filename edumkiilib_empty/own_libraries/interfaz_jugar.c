@@ -14,11 +14,31 @@
 #include <drivers/switch.h>
 #include <stdio.h>
 #include <msp430.h>
+#include "vista_tablero.h"
 
 extern Graphics_Context g_sContext;
 
 
-void disparar(uint8_t tablero[10][10]){
+// Vuelve a dibujar la pantalla de disparo tal como estaba (cuadrante,
+// casillas marcadas y cursor). Se usa al volver de ver mi tablero (P5.6).
+static void redibujar_disparo(uint8_t tablero[10][10], int posX, int posY,
+                              Graphics_Rectangle *rect){
+    int cuadrante = (posY<5) ? ((posX<5) ? 1 : 2) : ((posX<5) ? 3 : 4);
+
+    Graphics_setBackgroundColor(&g_sContext, GRAPHICS_COLOR_WHITE);
+    Graphics_clearDisplay(&g_sContext);
+    marcar_casillas(tablero, cuadrante);
+    switch (cuadrante){
+    case 1: pantalla11_drw(&g_sContext); break;
+    case 2: pantalla12_drw(&g_sContext); break;
+    case 3: pantalla21_drw(&g_sContext); break;
+    default: pantalla22_drw(&g_sContext); break;
+    }
+    Graphics_setForegroundColor(&g_sContext, GRAPHICS_COLOR_RED);
+    Graphics_fillRectangle(&g_sContext, rect);
+}
+
+void disparar(uint8_t tablero[10][10], uint8_t mi_tablero[10][10]){
 
     int fin=0;
     while(!fin){
@@ -28,13 +48,18 @@ void disparar(uint8_t tablero[10][10]){
         Graphics_setBackgroundColor(&g_sContext, GRAPHICS_COLOR_WHITE);
         Graphics_clearDisplay(&g_sContext);
         marcar_casillas(tablero,1);
-        pantalla11_drw();
+        pantalla11_drw(&g_sContext);
         Graphics_setForegroundColor(&g_sContext, GRAPHICS_COLOR_RED);
         Graphics_fillRectangle(&g_sContext, &rect);
 
 
 
         while (!SWITCH_get_edumkii_S1()){
+            // P5.6 (LaunchPad): ver mi tablero y, al volver a pulsar, regresar
+            if (vista_boton_pulsado()){
+                vista_mostrar_mi_tablero(&g_sContext, mi_tablero);
+                redibujar_disparo(tablero, posX, posY, &rect);
+            }
             if(JOYSTICK_get_x()>30){ //////No 0 por ruido
                 if (posX<9){
                     posX++;
@@ -45,7 +70,7 @@ void disparar(uint8_t tablero[10][10]){
                     rect.xMax=rect.xMin+18;
                     Graphics_clearDisplay(&g_sContext);
                     marcar_casillas(tablero,1);
-                    pantalla11_drw();
+                    pantalla11_drw(&g_sContext);
                     Graphics_setForegroundColor(&g_sContext, GRAPHICS_COLOR_RED);
                     Graphics_fillRectangle(&g_sContext, &rect);
 
@@ -54,7 +79,7 @@ void disparar(uint8_t tablero[10][10]){
                     rect.xMax=rect.xMin+18;
                     Graphics_clearDisplay(&g_sContext);
                     marcar_casillas(tablero,3);
-                    ////pantalla11_drw();--------------------------------------------Función para dibujar pantalla de abajo izquierda
+                    pantalla21_drw(&g_sContext);
                     Graphics_setForegroundColor(&g_sContext, GRAPHICS_COLOR_RED);
                     Graphics_fillRectangle(&g_sContext, &rect);
                 } else if(posX>=5 && posY<5){
@@ -62,7 +87,7 @@ void disparar(uint8_t tablero[10][10]){
                     rect.xMax=rect.xMin+18;
                     Graphics_clearDisplay(&g_sContext);
                     marcar_casillas(tablero,2);
-                    ////pantalla11_drw();--------------------------------------------Función para dibujar pantalla de arriba derecha
+                    pantalla12_drw(&g_sContext);
                     Graphics_setForegroundColor(&g_sContext, GRAPHICS_COLOR_RED);
                     Graphics_fillRectangle(&g_sContext, &rect);
                 }else{
@@ -70,7 +95,7 @@ void disparar(uint8_t tablero[10][10]){
                     rect.xMax=rect.xMin+18;
                     Graphics_clearDisplay(&g_sContext);
                     marcar_casillas(tablero,4);
-                    ////pantalla11_drw();--------------------------------------------Función para dibujar pantalla de abajo derecha
+                    pantalla22_drw(&g_sContext);
                     Graphics_setForegroundColor(&g_sContext, GRAPHICS_COLOR_RED);
                     Graphics_fillRectangle(&g_sContext, &rect);
                 }
@@ -85,7 +110,7 @@ void disparar(uint8_t tablero[10][10]){
                         rect.xMax=rect.xMin+18;
                         Graphics_clearDisplay(&g_sContext);
                         marcar_casillas(tablero,1);
-                        pantalla11_drw();
+                        pantalla11_drw(&g_sContext);
                         Graphics_setForegroundColor(&g_sContext, GRAPHICS_COLOR_RED);
                         Graphics_fillRectangle(&g_sContext, &rect);
 
@@ -94,7 +119,7 @@ void disparar(uint8_t tablero[10][10]){
                         rect.xMax=rect.xMin+18;
                         Graphics_clearDisplay(&g_sContext);
                         marcar_casillas(tablero,3);
-                        ////pantalla11_drw();--------------------------------------------Función para dibujar pantalla de abajo izquierda
+                        pantalla21_drw(&g_sContext);
                         Graphics_setForegroundColor(&g_sContext, GRAPHICS_COLOR_RED);
                         Graphics_fillRectangle(&g_sContext, &rect);
                     } else if(posX>=5 && posY<5){
@@ -102,7 +127,7 @@ void disparar(uint8_t tablero[10][10]){
                         rect.xMax=rect.xMin+18;
                         Graphics_clearDisplay(&g_sContext);
                         marcar_casillas(tablero,2);
-                        ////pantalla11_drw();--------------------------------------------Función para dibujar pantalla de arriba derecha
+                        pantalla12_drw(&g_sContext);
                         Graphics_setForegroundColor(&g_sContext, GRAPHICS_COLOR_RED);
                         Graphics_fillRectangle(&g_sContext, &rect);
                     }else{
@@ -110,7 +135,7 @@ void disparar(uint8_t tablero[10][10]){
                         rect.xMax=rect.xMin+18;
                         Graphics_clearDisplay(&g_sContext);
                         marcar_casillas(tablero,4);
-                        ////pantalla11_drw();--------------------------------------------Función para dibujar pantalla de abajo derecha
+                        pantalla22_drw(&g_sContext);
                         Graphics_setForegroundColor(&g_sContext, GRAPHICS_COLOR_RED);
                         Graphics_fillRectangle(&g_sContext, &rect);
                     }
@@ -127,7 +152,7 @@ void disparar(uint8_t tablero[10][10]){
                     rect.yMax=rect.yMin+18;
                     Graphics_clearDisplay(&g_sContext);
                     marcar_casillas(tablero,1);
-                    pantalla11_drw();
+                    pantalla11_drw(&g_sContext);
                     Graphics_setForegroundColor(&g_sContext, GRAPHICS_COLOR_RED);
                     Graphics_fillRectangle(&g_sContext, &rect);
 
@@ -136,7 +161,7 @@ void disparar(uint8_t tablero[10][10]){
                     rect.yMax=rect.yMin+18;
                     Graphics_clearDisplay(&g_sContext);
                     marcar_casillas(tablero,2);
-                    ////pantalla11_drw();--------------------------------------------Función para dibujar pantalla de abajo izquierda
+                    pantalla12_drw(&g_sContext);
                     Graphics_setForegroundColor(&g_sContext, GRAPHICS_COLOR_RED);
                     Graphics_fillRectangle(&g_sContext, &rect);
                 } else if(posX<5 && posY>=5){
@@ -144,7 +169,7 @@ void disparar(uint8_t tablero[10][10]){
                     rect.yMax=rect.yMin+18;
                     Graphics_clearDisplay(&g_sContext);
                     marcar_casillas(tablero,3);
-                    ////pantalla11_drw();--------------------------------------------Función para dibujar pantalla de arriba derecha
+                    pantalla21_drw(&g_sContext);
                     Graphics_setForegroundColor(&g_sContext, GRAPHICS_COLOR_RED);
                     Graphics_fillRectangle(&g_sContext, &rect);
                 }else{
@@ -152,7 +177,7 @@ void disparar(uint8_t tablero[10][10]){
                     rect.yMax=rect.yMin+18;
                     Graphics_clearDisplay(&g_sContext);
                     marcar_casillas(tablero,4);
-                    ////pantalla11_drw();--------------------------------------------Función para dibujar pantalla de abajo derecha
+                    pantalla22_drw(&g_sContext);
                     Graphics_setForegroundColor(&g_sContext, GRAPHICS_COLOR_RED);
                     Graphics_fillRectangle(&g_sContext, &rect);
                 }
@@ -166,7 +191,7 @@ void disparar(uint8_t tablero[10][10]){
                     rect.yMax=rect.yMin+18;
                     Graphics_clearDisplay(&g_sContext);
                     marcar_casillas(tablero,1);
-                    pantalla11_drw();
+                    pantalla11_drw(&g_sContext);
                     Graphics_setForegroundColor(&g_sContext, GRAPHICS_COLOR_RED);
                     Graphics_fillRectangle(&g_sContext, &rect);
 
@@ -175,7 +200,7 @@ void disparar(uint8_t tablero[10][10]){
                     rect.yMax=rect.yMin+18;
                     Graphics_clearDisplay(&g_sContext);
                     marcar_casillas(tablero,2);
-                    ////pantalla11_drw();--------------------------------------------Función para dibujar pantalla de abajo izquierda
+                    pantalla12_drw(&g_sContext);
                     Graphics_setForegroundColor(&g_sContext, GRAPHICS_COLOR_RED);
                     Graphics_fillRectangle(&g_sContext, &rect);
                 } else if(posX<5 && posY>=5){
@@ -183,7 +208,7 @@ void disparar(uint8_t tablero[10][10]){
                     rect.yMax=rect.yMin+18;
                     Graphics_clearDisplay(&g_sContext);
                     marcar_casillas(tablero,3);
-                    ////pantalla11_drw();--------------------------------------------Función para dibujar pantalla de arriba derecha
+                    pantalla21_drw(&g_sContext);
                     Graphics_setForegroundColor(&g_sContext, GRAPHICS_COLOR_RED);
                     Graphics_fillRectangle(&g_sContext, &rect);
                 }else{
@@ -191,7 +216,7 @@ void disparar(uint8_t tablero[10][10]){
                     rect.yMax=rect.yMin+18;
                     Graphics_clearDisplay(&g_sContext);
                     marcar_casillas(tablero,4);
-                    ////pantalla11_drw();--------------------------------------------Función para dibujar pantalla de abajo derecha
+                    pantalla22_drw(&g_sContext);
                     Graphics_setForegroundColor(&g_sContext, GRAPHICS_COLOR_RED);
                     Graphics_fillRectangle(&g_sContext, &rect);
                 }
@@ -462,25 +487,6 @@ void marcar_casillas(uint8_t tablero[10][10],int cuadrante){
 }
 
 
-void pantalla11_drw()
-{
-    int32_t line_v[] = {27, 0, 127}, line_h[] = {0, 127, 27};
-    char letra[] = "ABCDE", zenbaki[] = "12345";
-    int i;
-
-    Graphics_setForegroundColor(&g_sContext, ClrBlack);
-    Graphics_setBackgroundColor(&g_sContext, ClrWhite);
-
-    for (i = 0; i < 5; i++)
-    {
-        Graphics_drawLineV(&g_sContext, line_v[0] + i*20, line_v[1], line_v[2]);
-        Graphics_drawLineH(&g_sContext, line_h[0], line_h[1], line_h[2] + i*20);
-
-        Graphics_drawString(&g_sContext, (int8_t *)&letra[i], 1, 9, 33 + i*20, true);   // Pendiente cambiar por Graphics_drawStringCentered para hacerlo bonito
-        Graphics_drawString(&g_sContext, (int8_t *)&zenbaki[i], 1, 33 + i*20, 9, true);
-
-    }
-}
 
 
 

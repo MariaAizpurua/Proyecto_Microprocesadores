@@ -1,245 +1,259 @@
 #include "vista_tablero.h"
+#include "Pantalla_drw.h"
+#include <msp430.h>
+#include <driverlib.h>
+#include <drivers/joystick.h>
 
-/* Convención de ejes: x = columna, y = fila, matriz[y][x].
- * Ver vista_tablero.h.
- * Los puntos pendientes de acordar con el equipo están marcados con
- * TODO(equipo). */
+/* Convencion de ejes: x = columna, y = fila, matriz[y][x].
+ * Ver vista_tablero.h. */
 
 /* ---------------------------------------------------------------
- * Geometría (pantalla 128x128)
- * Dejamos 23 px arriba e izquierda para el indicador y las cabeceras.
- * 5 casillas * 20 px = 100 px -> el tablero ocupa de 23 a 123.
- * TODO(equipo): si la compañera usa otras medidas en su pantalla,
- * igualarlas aquí para que las dos se vean consistentes.
+ * Geometria: la misma que marcar_casillas() de interfaz_jugar.c y
+ * las cuadriculas de Pantalla_drw.c (pantalla 128x128).
+ *   columnas 0..4 (pantallas 11/21): xMin = 28 + x*20
+ *   columnas 5..9 (pantallas 12/22): xMin = (x-5)*20 + 1
+ *   filas    0..4 (pantallas 11/12): yMin = 28 + y*20
+ *   filas    5..9 (pantallas 21/22): yMin = (y-5)*20 + 1
  * --------------------------------------------------------------- */
-#define MARGEN_X        23
-#define MARGEN_Y        23
 #define TAM_CASILLA     20
+#define LADO_RELLENO    18      /* xMax = xMin + 18 (como en disparar) */
 #define CASILLAS_LADO   5
 
-/* Cabeceras: columnas (x) = números 1..10 arriba,
- *            filas    (y) = letras A..J a la izquierda.
- * El cuadrado de arriba a la izquierda (MARGEN_X x MARGEN_Y) es el
- * indicador de en qué pantalla estás. */
-#define Y_CAB_COLS      ((MARGEN_Y - 8) / 2)   /* texto 6x8 centrado */
-#define X_CAB_FILAS     ((MARGEN_X - 6) / 2)
+#define UMBRAL_JOYSTICK   30          /* igual que en interfaz_jugar.c */
+#define RETARDO_JOYSTICK  3200000     /* 200 ms a 16 MHz */
+#define RETARDO_REBOTE    160000      /* 10 ms a 16 MHz */
 
-/* Colores de fondo y texto.
- * TODO(equipo): en el vídeo de la compañera el tablero tiene casillas
- * claras y el rival se ve sobre fondo claro; si se quiere el mismo
- * aspecto en las dos pantallas, cambiar aquí. */
-#define COLOR_FONDO     GRAPHICS_COLOR_BLACK
-#define COLOR_TEXTO     GRAPHICS_COLOR_WHITE
-
-/* Cursor.
- * TODO(equipo): en "mi tablero" el cursor solo sirve para moverse entre
- * cuadrantes y ver el tablero entero. Poner a 0 si no se quiere ver. */
-#define CURSOR_VISIBLE  1
-#define COLOR_CURSOR    GRAPHICS_COLOR_YELLOW
+/* Colores (misma paleta que la pantalla de disparar) */
+#define COLOR_BARCO       GRAPHICS_COLOR_GRAY
+#define COLOR_TOCADO      GRAPHICS_COLOR_LIGHT_CORAL
+#define COLOR_HUNDIDO     GRAPHICS_COLOR_DARK_RED
+#define COLOR_FALLO       GRAPHICS_COLOR_LIGHT_SKY_BLUE
+#define COLOR_AGUA        GRAPHICS_COLOR_WHITE
+#define COLOR_CURSOR      GRAPHICS_COLOR_RED
+#define COLOR_INDICADOR   GRAPHICS_COLOR_LIGHT_GRAY
 
 /* ---------------------------------------------------------------
- * Funciones auxiliares (privadas)
+ * Boton P5.6 (S1 de la LaunchPad)
+ * Activo a nivel bajo: pull-up interno, al pulsar se lee 0.
+ * La interrupcion guarda la pulsacion para no perderla aunque el
+ * bucle que pregunta tenga retardos largos (disparar() tiene 400 ms).
+ * OJO: este fichero define la ISR del puerto 5. Si algun dia otro
+ * modulo necesita PORT5_VECTOR, hay que juntarlas en una sola.
+ * --------------------------------------------------------------- */
+static volatile bool flag_p56 = false;
+static bool p56_pulsado = false;
+
+void vista_init(void)
+{
+    GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P5, GPIO_PIN6);
+    GPIO_selectInterruptEdge(GPIO_PORT_P5, GPIO_PIN6, GPIO_HIGH_TO_LOW_TRANSITION);
+    GPIO_clearInterrupt(GPIO_PORT_P5, GPIO_PIN6);
+    GPIO_enableInterrupt(GPIO_PORT_P5, GPIO_PIN6);
+    flag_p56 = false;
+    p56_pulsado = false;
+}
+
+#pragma vector=PORT5_VECTOR
+__interrupt void vista_port5_isr(void)
+{
+    if (GPIO_getInterruptStatus(GPIO_PORT_P5, GPIO_PIN6) & GPIO_PIN6)
+    {
+        flag_p56 = true;
+        GPIO_clearInterrupt(GPIO_PORT_P5, GPIO_PIN6);
+    }
+}
+
+/* Misma maquina de estados que switch.c: una pulsacion = un evento,
+ * con antirrebote al pulsar y al soltar. */
+bool vista_boton_pulsado(void)
+{
+    if (!p56_pulsado)
+    {
+        if (flag_p56)
+        {
+            __delay_cycles(RETARDO_REBOTE);
+            flag_p56 = false;
+            p56_pulsado = true;
+            return true;
+        }
+    }
+    else if (GPIO_getInputPinValue(GPIO_PORT_P5, GPIO_PIN6) == GPIO_INPUT_PIN_HIGH)
+    {
+        __delay_cycles(RETARDO_REBOTE);
+        flag_p56 = false;
+        if (GPIO_getInputPinValue(GPIO_PORT_P5, GPIO_PIN6) == GPIO_INPUT_PIN_HIGH)
+        {
+            p56_pulsado = false;
+        }
+    }
+    return false;
+}
+
+/* ---------------------------------------------------------------
+ * Funciones auxiliares de dibujo (privadas)
  * --------------------------------------------------------------- */
 
-/* Devuelve la primera casilla (0 ó 5) del cuadrante que contiene 'valor'. */
+/* Primera casilla (0 o 5) del cuadrante que contiene "valor". */
 static uint8_t inicio_cuadrante(uint8_t valor)
 {
     return (valor >= CASILLAS_LADO) ? CASILLAS_LADO : 0;
 }
 
-/* Color de cada estado.
- * TODO(equipo): acordar la paleta definitiva con la compañera para que
- * "tocado", "hundido", "agua" y "fallo" se vean igual en las dos
- * pantallas. En su vídeo: tocado = rojo, hundido = rojo oscuro,
- * agua = azul claro. Aquí: tocado = naranja, hundido = rojo,
- * fallo = blanco.
- * TODO(equipo): ahora todos los barcos sin tocar son del mismo gris;
- * se podría usar un color por tipo de barco si se quiere. */
-static uint32_t color_de_estado(uint8_t estado, uint8_t mostrar_barcos)
+static int16_t px_casilla(uint8_t x)
 {
-    switch (estado) {
-    case BARCO_2:
-    case BARCO_3A:
-    case BARCO_3B:
-    case BARCO_4:
-    case BARCO_5:
-        /* En el tablero del rival no se ven los barcos sin tocar */
-        return mostrar_barcos ? GRAPHICS_COLOR_GRAY : GRAPHICS_COLOR_BLUE;
-    case TOCADO:
-        return GRAPHICS_COLOR_ORANGE;
-    case HUNDIDO:
-        return GRAPHICS_COLOR_RED;
-    case BOMBA_FALLIDA:
-        return GRAPHICS_COLOR_WHITE;
-    case AGUA:
-    default:
-        return GRAPHICS_COLOR_BLUE;
-    }
+    return (x < CASILLAS_LADO) ? 28 + x * TAM_CASILLA
+                               : (x - CASILLAS_LADO) * TAM_CASILLA + 1;
 }
 
-/* Pinta la casilla (x, y) si está en el cuadrante visible; si es la
- * del cursor, le añade el borde. */
+static int16_t py_casilla(uint8_t y)
+{
+    return (y < CASILLAS_LADO) ? 28 + y * TAM_CASILLA
+                               : (y - CASILLAS_LADO) * TAM_CASILLA + 1;
+}
+
+static uint32_t color_de_estado(uint8_t estado)
+{
+    if (ES_BARCO_INTACTO(estado)) return COLOR_BARCO;
+    if (ES_BARCO_TOCADO(estado))  return COLOR_TOCADO;
+    if (estado == HUNDIDO)        return COLOR_HUNDIDO;
+    if (estado == BOMBA_FALLIDA)  return COLOR_FALLO;
+    return COLOR_AGUA;
+}
+
+/* Pinta la casilla (x, y) si esta en el cuadrante visible; si es la
+ * del cursor, le pone un borde rojo de 2 px (se sigue viendo el
+ * color de la casilla). */
 static void pintar_casilla(Graphics_Context *g,
                            uint8_t matriz[FILAS_TABLERO][COLS_TABLERO],
                            uint8_t x, uint8_t y,
-                           uint8_t cursor_x, uint8_t cursor_y,
-                           uint8_t mostrar_barcos)
+                           uint8_t cursor_x, uint8_t cursor_y)
 {
     uint8_t ini_x = inicio_cuadrante(cursor_x);
     uint8_t ini_y = inicio_cuadrante(cursor_y);
+    Graphics_Rectangle rect;
 
     if (x < ini_x || x >= ini_x + CASILLAS_LADO) return;
     if (y < ini_y || y >= ini_y + CASILLAS_LADO) return;
 
-    int16_t px_min = MARGEN_X + (x - ini_x) * TAM_CASILLA;
-    int16_t py_min = MARGEN_Y + (y - ini_y) * TAM_CASILLA;
+    rect.xMin = px_casilla(x);
+    rect.yMin = py_casilla(y);
+    rect.xMax = rect.xMin + LADO_RELLENO;
+    rect.yMax = rect.yMin + LADO_RELLENO;
 
-    Graphics_Rectangle rect;
-    rect.xMin = px_min;
-    rect.yMin = py_min;
-    rect.xMax = px_min + TAM_CASILLA - 2;   /* -2 deja 1 px de separación */
-    rect.yMax = py_min + TAM_CASILLA - 2;
-
-    Graphics_setForegroundColor(g, color_de_estado(matriz[y][x],
-                                                   mostrar_barcos));
+    Graphics_setForegroundColor(g, color_de_estado(matriz[y][x]));
     Graphics_fillRectangle(g, &rect);
 
-#if CURSOR_VISIBLE
-    if (x == cursor_x && y == cursor_y) {
+    if (x == cursor_x && y == cursor_y)
+    {
         Graphics_setForegroundColor(g, COLOR_CURSOR);
         Graphics_drawRectangle(g, &rect);
-    }
-#endif
-}
-
-/* TODO(equipo): según la versión de grlib, el parámetro de texto puede
- * ser int8_t* o char*, y la constante de texto transparente puede
- * llamarse distinto (GRAPHICS_TRANSPARENT_TEXT / TRANSPARENT_TEXT).
- * Ajustar aquí si el compilador da error. */
-static void dibujar_texto(Graphics_Context *g, const char *txt,
-                          int32_t x, int32_t y)
-{
-    Graphics_drawString(g, (int8_t *)txt, GRAPHICS_AUTO_STRING_LENGTH,
-                        x, y, GRAPHICS_TRANSPARENT_TEXT);
-}
-
-/* Cabeceras del cuadrante visible: números arriba, letras a la izquierda. */
-static void dibujar_cabeceras(Graphics_Context *g,
-                              uint8_t cursor_x, uint8_t cursor_y)
-{
-    uint8_t ini_x = inicio_cuadrante(cursor_x);
-    uint8_t ini_y = inicio_cuadrante(cursor_y);
-    uint8_t i;
-    char buf[3];
-
-    Graphics_setForegroundColor(g, COLOR_TEXTO);
-
-    /* Columnas (x): números 1..5 o 6..10, centrados sobre cada casilla */
-    for (i = 0; i < CASILLAS_LADO; i++) {
-        uint8_t n = ini_x + i + 1;
-        if (n < 10) {
-            buf[0] = '0' + n;
-            buf[1] = '\0';
-            dibujar_texto(g, buf, MARGEN_X + i * TAM_CASILLA + 7, Y_CAB_COLS);
-        } else {
-            buf[0] = '1';
-            buf[1] = '0';
-            buf[2] = '\0';
-            dibujar_texto(g, buf, MARGEN_X + i * TAM_CASILLA + 4, Y_CAB_COLS);
-        }
-    }
-
-    /* Filas (y): letras A..E o F..J, a la altura de cada casilla */
-    for (i = 0; i < CASILLAS_LADO; i++) {
-        buf[0] = 'A' + ini_y + i;
-        buf[1] = '\0';
-        dibujar_texto(g, buf, X_CAB_FILAS, MARGEN_Y + i * TAM_CASILLA + 5);
+        rect.xMin++; rect.yMin++; rect.xMax--; rect.yMax--;
+        Graphics_drawRectangle(g, &rect);
     }
 }
 
-/* Cuadrado de arriba a la izquierda: indica en qué pantalla estás.
- *   "YO"  sobre fondo gris -> mi tablero (los barcos propios son grises)
- *   "RIV" solo con marco   -> tablero del rival
- * TODO(equipo): acordar con la compañera cómo se indica la pantalla en
- * su lado (texto, icono, color...) para que las dos sean coherentes.
- * Las posiciones del texto (5,7) y (2,7) están ajustadas a ojo para la
- * fuente 6x8; revisarlas en la placa real. */
-static void dibujar_indicador(Graphics_Context *g, uint8_t mostrar_barcos)
+/* Cuadricula y letras/numeros del cuadrante (Pantalla_drw.c) y "YO"
+ * en la esquina libre que queda entre letras y numeros. */
+static void dibujar_marco(Graphics_Context *g, uint8_t cursor_x, uint8_t cursor_y)
 {
-    Graphics_Rectangle r;
-    r.xMin = 0;
-    r.yMin = 0;
-    r.xMax = MARGEN_X - 2;
-    r.yMax = MARGEN_Y - 2;
+    Graphics_Rectangle esquina;
+    bool derecha = (cursor_x >= CASILLAS_LADO);
+    bool abajo   = (cursor_y >= CASILLAS_LADO);
 
-    if (mostrar_barcos) {
-        Graphics_setForegroundColor(g, GRAPHICS_COLOR_GRAY);
-        Graphics_fillRectangle(g, &r);
-        Graphics_setForegroundColor(g, COLOR_TEXTO);
-        dibujar_texto(g, "YO", 5, 7);
-    } else {
-        Graphics_setForegroundColor(g, COLOR_TEXTO);
-        Graphics_drawRectangle(g, &r);
-        dibujar_texto(g, "RIV", 2, 7);
-    }
+    if (!derecha && !abajo)      pantalla11_drw(g);
+    else if (derecha && !abajo)  pantalla12_drw(g);
+    else if (!derecha && abajo)  pantalla21_drw(g);
+    else                         pantalla22_drw(g);
+
+    esquina.xMin = derecha ? 102 : 1;
+    esquina.xMax = esquina.xMin + 24;
+    esquina.yMin = abajo ? 102 : 1;
+    esquina.yMax = esquina.yMin + 24;
+
+    Graphics_setForegroundColor(g, COLOR_INDICADOR);
+    Graphics_fillRectangle(g, &esquina);
+    Graphics_setForegroundColor(g, GRAPHICS_COLOR_BLACK);
+    Graphics_drawStringCentered(g, (int8_t *)"YO", AUTO_STRING_LENGTH,
+                                esquina.xMin + 12, esquina.yMin + 12, false);
 }
 
 /* ---------------------------------------------------------------
- * Funciones públicas
+ * Funciones publicas
  * --------------------------------------------------------------- */
 
 void vista_dibujar_tablero(Graphics_Context *g,
                            uint8_t matriz[FILAS_TABLERO][COLS_TABLERO],
-                           uint8_t cursor_x, uint8_t cursor_y,
-                           uint8_t mostrar_barcos)
+                           uint8_t cursor_x, uint8_t cursor_y)
 {
     uint8_t dx, dy;
     uint8_t ini_x = inicio_cuadrante(cursor_x);
     uint8_t ini_y = inicio_cuadrante(cursor_y);
 
-    /* TODO(equipo): si otro módulo ya configura la fuente y el color de
-     * fondo del contexto gráfico, quitar estas dos líneas. */
-    Graphics_setFont(g, &g_sFontFixed6x8);
-    Graphics_setBackgroundColor(g, COLOR_FONDO);
+    Graphics_setBackgroundColor(g, GRAPHICS_COLOR_WHITE);
     Graphics_clearDisplay(g);
 
-    dibujar_indicador(g, mostrar_barcos);
-    dibujar_cabeceras(g, cursor_x, cursor_y);
-
-    for (dy = 0; dy < CASILLAS_LADO; dy++) {
-        for (dx = 0; dx < CASILLAS_LADO; dx++) {
+    for (dy = 0; dy < CASILLAS_LADO; dy++)
+        for (dx = 0; dx < CASILLAS_LADO; dx++)
             pintar_casilla(g, matriz, ini_x + dx, ini_y + dy,
-                           cursor_x, cursor_y, mostrar_barcos);
-        }
-    }
+                           cursor_x, cursor_y);
+
+    dibujar_marco(g, cursor_x, cursor_y);
 }
 
 void vista_mover_cursor(Graphics_Context *g,
                         uint8_t matriz[FILAS_TABLERO][COLS_TABLERO],
                         uint8_t x_ant, uint8_t y_ant,
-                        uint8_t x_nue, uint8_t y_nue,
-                        uint8_t mostrar_barcos)
+                        uint8_t x_nue, uint8_t y_nue)
 {
     if (x_ant == x_nue && y_ant == y_nue) return;
 
-    /* ¿Cambia de cuadrante? Entonces hay que redibujar todo */
+    /* Cambia de cuadrante: redibujar todo */
     if (inicio_cuadrante(x_ant) != inicio_cuadrante(x_nue) ||
-        inicio_cuadrante(y_ant) != inicio_cuadrante(y_nue)) {
-        vista_dibujar_tablero(g, matriz, x_nue, y_nue, mostrar_barcos);
+        inicio_cuadrante(y_ant) != inicio_cuadrante(y_nue))
+    {
+        vista_dibujar_tablero(g, matriz, x_nue, y_nue);
         return;
     }
 
-    /* Mismo cuadrante: quitar el borde de la casilla anterior y
-     * poner el de la nueva. */
-    pintar_casilla(g, matriz, x_ant, y_ant, x_nue, y_nue, mostrar_barcos);
-    pintar_casilla(g, matriz, x_nue, y_nue, x_nue, y_nue, mostrar_barcos);
+    /* Mismo cuadrante: quitar el cursor de la anterior y ponerlo en la nueva */
+    pintar_casilla(g, matriz, x_ant, y_ant, x_nue, y_nue);
+    pintar_casilla(g, matriz, x_nue, y_nue, x_nue, y_nue);
 }
 
 void vista_actualizar_casilla(Graphics_Context *g,
                               uint8_t matriz[FILAS_TABLERO][COLS_TABLERO],
                               uint8_t x, uint8_t y,
-                              uint8_t cursor_x, uint8_t cursor_y,
-                              uint8_t mostrar_barcos)
+                              uint8_t cursor_x, uint8_t cursor_y)
 {
-    pintar_casilla(g, matriz, x, y, cursor_x, cursor_y, mostrar_barcos);
+    pintar_casilla(g, matriz, x, y, cursor_x, cursor_y);
+}
+
+void vista_mostrar_mi_tablero(Graphics_Context *g,
+                              uint8_t matriz[FILAS_TABLERO][COLS_TABLERO])
+{
+    uint8_t x = 0, y = 0, nx, ny;
+    float jx, jy;
+
+    vista_dibujar_tablero(g, matriz, x, y);
+
+    while (!vista_boton_pulsado())          /* P5.6 otra vez -> salir */
+    {
+        nx = x;
+        ny = y;
+        jx = JOYSTICK_get_x();
+        jy = JOYSTICK_get_y();
+
+        if (jx > UMBRAL_JOYSTICK && x < COLS_TABLERO - 1)        nx++;
+        else if (jx < -UMBRAL_JOYSTICK && x > 0)                 nx--;
+        if (jy > UMBRAL_JOYSTICK && y > 0)                       ny--;  /* arriba */
+        else if (jy < -UMBRAL_JOYSTICK && y < FILAS_TABLERO - 1) ny++;  /* abajo */
+
+        if (nx != x || ny != y)
+        {
+            vista_mover_cursor(g, matriz, x, y, nx, ny);
+            x = nx;
+            y = ny;
+            __delay_cycles(RETARDO_JOYSTICK);
+        }
+    }
 }

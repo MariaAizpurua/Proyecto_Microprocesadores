@@ -9,33 +9,21 @@ CMD_SRCS += \
 ../lnk_msp430fr5994.cmd 
 
 C_SRCS += \
-../interfaz_jugar.c \
-../main.c \
-../pantalla_marcador.c 
+../main.c 
 
 C_DEPS += \
-./interfaz_jugar.d \
-./main.d \
-./pantalla_marcador.d 
+./main.d 
 
 OBJS += \
-./interfaz_jugar.obj \
-./main.obj \
-./pantalla_marcador.obj 
+./main.obj 
 
 OBJS__QUOTED += \
-"interfaz_jugar.obj" \
-"main.obj" \
-"pantalla_marcador.obj" 
+"main.obj" 
 
 C_DEPS__QUOTED += \
-"interfaz_jugar.d" \
-"main.d" \
-"pantalla_marcador.d" 
+"main.d" 
 
 C_SRCS__QUOTED += \
-"../interfaz_jugar.c" \
-"../main.c" \
-"../pantalla_marcador.c" 
+"../main.c" 
 
 

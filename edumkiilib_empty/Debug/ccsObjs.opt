@@ -1,6 +1,4 @@
-"./interfaz_jugar.obj"
 "./main.obj"
-"./pantalla_marcador.obj"
 "./_ti_driverlib_2.91.13.01/adc12_b.obj"
 "./_ti_driverlib_2.91.13.01/aes256.obj"
 "./_ti_driverlib_2.91.13.01/comp_e.obj"
@@ -216,6 +214,10 @@
 "./hal/hal_lcd.obj"
 "./hal/hal_pwm.obj"
 "./hal/hal_uart.obj"
+"./own_libraries/Pantalla_drw.obj"
+"./own_libraries/enlace_marcador.obj"
+"./own_libraries/interfaz_jugar.obj"
+"./own_libraries/vista_tablero.obj"
 "../lnk_msp430fr5994.cmd"
 -llibmath.a
 -llibc.a

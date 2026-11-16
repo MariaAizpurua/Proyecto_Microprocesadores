@@ -117,4 +117,5 @@ _ti_grlib_3.21.00.00 \
 _ti_grlib_3.21.00.00/fonts \
 drivers \
 hal \
+own_libraries \
 

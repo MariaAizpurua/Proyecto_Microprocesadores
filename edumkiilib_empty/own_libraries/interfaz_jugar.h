@@ -11,7 +11,8 @@
 #include <stdint.h>
 
 void marcar_casillas(uint8_t tablero[10][10], int cuadrante);
-void disparar(uint8_t tablero[10][10]);
-void pantalla11_drw();
+// tablero    = tablero del rival (al que se dispara)
+// mi_tablero = el mio, se ve al pulsar P5.6 (vista_tablero)
+void disparar(uint8_t tablero[10][10], uint8_t mi_tablero[10][10]);
 
 #endif /* INTERFAZ_JUGAR_H_ */

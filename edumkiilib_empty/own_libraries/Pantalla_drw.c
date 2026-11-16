@@ -5,7 +5,7 @@
  *      Author: arodriguezd.5
  */
 
-#include "pantalla_drw.h"
+#include "Pantalla_drw.h"
 
 /*  Screen enumeration:
  *
@@ -89,7 +89,7 @@ void pantalla21_drw(Graphics_Context *g_sContext)
 void pantalla22_drw(Graphics_Context *g_sContext)
 {
     int32_t line_v[] = {20, 0, 127}, line_h[] = {0, 127, 20};
-    char letra[] = "ABCDE", zenbaki[] = "12345";
+    char letra[] = "FGHIJ", zenbaki[] = "678910";
     int i;
 
     Graphics_setForegroundColor(g_sContext, ClrBlack);

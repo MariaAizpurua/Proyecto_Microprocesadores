@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <grlib.h>
 #include <stdint.h>
+#include <string.h>
 extern Graphics_Context g_sContext;
 
 #define Y_Separacion_turno 11
@@ -35,6 +36,10 @@ static void dibujar_casilla_vacia(uint8_t jugador,uint8_t barco,uint8_t pos){
 
 }
 void marcador(void){
+    // Reinicio: cada partida nueva empieza con los contadores a 0
+    memset(contador, 0, sizeof(contador));
+    memset(barcos, 0, sizeof(barcos));
+
     Graphics_setForegroundColor(&g_sContext, ClrBlack);
     Graphics_setBackgroundColor(&g_sContext, ClrWhite);
     Graphics_clearDisplay(&g_sContext);
