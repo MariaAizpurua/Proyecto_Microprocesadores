@@ -42,12 +42,18 @@
 #include <drivers/buzzer.h>
 #include <drivers/cli.h>
 
+<<<<<<< Updated upstream
 // Own libraries (Place_ship y pantalla_marcador NO se incluyen todavia:
 // Place_ship no esta terminado y pantalla_marcador va en la otra placa)
 #include <own_libraries/tablero.h>
 #include <own_libraries/interfaz_jugar.h>
 #include <own_libraries/vista_tablero.h>
 #include <own_libraries/enlace_marcador.h>
+=======
+//Own libraries
+#include <own_libraries/Pantalla_drw.h>
+#include <own_libraries/Place_ship.h>
+>>>>>>> Stashed changes
 
 // Global variables
 Graphics_Context g_sContext;
@@ -221,6 +227,7 @@ void main(void)
 
     while (1)
     {
+<<<<<<< Updated upstream
         /* ---------------- Nueva partida ---------------- */
         uint8_t turno = 0;                       // 0 = PLAYER 1, 1 = PLAYER 2
         uint8_t copia[FILAS_TABLERO][COLS_TABLERO];
@@ -268,5 +275,8 @@ void main(void)
 
             turno = rival;
         }
+=======
+        place_ship(&g_sContext);
+>>>>>>> Stashed changes
     }
 }

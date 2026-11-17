@@ -6,11 +6,13 @@
 */
 
 #include "Place_ship.h"
-
-void place_shipd(int info[][10])
+//, int info[][10]
+void place_ship(Graphics_Context *g_sContext)
 {
     int pointer[2] = {0, 0}; // Ubicación del barco
     bool rot = false; // Sentido del barco
+
+    Graphics_Rectangle rect;
 
     while (1)
     {
@@ -66,10 +68,56 @@ void place_shipd(int info[][10])
             rot = !rot;
         }
 
-        // TODO: Rotar pieza, generar gráficos, poner barco con A, Retardo para no saturar
+        Graphics_clearDisplay(g_sContext);
+
+        if ((pointer[0] <= 4) && (pointer[1] <= 4))
+        {
+            pantalla11_drw(g_sContext);
+
+            rect.xMin = 27 + 20 * pointer[0];
+            rect.xMax = 47 + 20 * pointer[0];
+
+            rect.yMax = 27 + 20 * pointer[0];
+            rect.yMin = 47 + 20 * pointer[0];
+
+        }
+        else if ((pointer[0] > 4) && (pointer[1] <= 4))
+        {
+            pantalla12_drw(g_sContext);
+
+            rect.xMin = 20 * pointer[0];
+            rect.xMax = 20 + 20 * pointer[0];
+
+            rect.yMax = 27 + 20 * pointer[0];
+            rect.yMin = 47 + 20 * pointer[0];
+
+        }
+        else if ((pointer[0] <= 4) && (pointer[1] > 4))
+        {
+            pantalla21_drw(g_sContext);
+
+            rect.xMin = 27 + 20 * pointer[0];
+            rect.xMax = 47 + 20 * pointer[0];
+
+            rect.yMax = 20 * pointer[0];
+            rect.yMin = 20 + 20 * pointer[0];
+
+        }
+        else
+        {
+            pantalla22_drw(g_sContext);
+
+            rect.xMin = 20 * pointer[0];
+            rect.xMax = 20 + 20 * pointer[0];
+
+            rect.yMax = 20 * pointer[0];
+            rect.yMin = 20 + 20 * pointer[0];
+
+        }
+
+        Graphics_setForegroundColor(g_sContext, ClrCoral);
+        Graphics_fillRectangle(g_sContext, &rect);
 
         __delay_cycles(8000000); //Espera de 500ms~
     }
 }
-
-void ship_2
