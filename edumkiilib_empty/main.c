@@ -42,18 +42,18 @@
 #include <drivers/buzzer.h>
 #include <drivers/cli.h>
 
-<<<<<<< Updated upstream
+
 // Own libraries (Place_ship y pantalla_marcador NO se incluyen todavia:
 // Place_ship no esta terminado y pantalla_marcador va en la otra placa)
 #include <own_libraries/tablero.h>
 #include <own_libraries/interfaz_jugar.h>
 #include <own_libraries/vista_tablero.h>
 #include <own_libraries/enlace_marcador.h>
-=======
+
 //Own libraries
 #include <own_libraries/Pantalla_drw.h>
 #include <own_libraries/Place_ship.h>
->>>>>>> Stashed changes
+
 
 // Global variables
 Graphics_Context g_sContext;
@@ -162,6 +162,27 @@ static bool flota_hundida(uint8_t t[FILAS_TABLERO][COLS_TABLERO])
     return true;
 }
 
+static void debug_mostrar_matriz(uint8_t t[FILAS_TABLERO][COLS_TABLERO])
+{
+    uint8_t fila, col;
+        char txt[2] = {'0', '\0'};
+
+        Graphics_setFont(&g_sContext, &g_sFontCm12);
+        Graphics_setBackgroundColor(&g_sContext, GRAPHICS_COLOR_WHITE);
+        Graphics_setForegroundColor(&g_sContext, GRAPHICS_COLOR_BLACK);
+        Graphics_clearDisplay(&g_sContext);
+
+        for (fila = 0; fila < 10; fila++)
+        {
+            for (col = 0; col < 10; col++)
+            {
+                txt[0] = '0' + t[fila][col];
+                Graphics_drawString(&g_sContext, (int8_t *)txt, AUTO_STRING_LENGTH,
+                                    4 + col * 12, 4 + fila * 12, false);
+            }
+        }
+}
+
 static void Clocks_init()
 {
     // Increase FRAM access wait time. Needed to work properly at 16MHz
@@ -185,11 +206,11 @@ void main(void)
     // Initialize HAL GPIOs
     HAL_LCD_init_gpio();
     HAL_I2C_init_gpio();
-    HAL_DIGIN_init_gpio();
     HAL_DIGOUT_init_gpio();
     HAL_UART_init_gpio();
     HAL_ADC_init_gpio();
     HAL_PWM_init_gpio();        // last on purpose: wins P3.4-P3.7 muxing
+    HAL_DIGIN_init_gpio();      //Se retrasa a posta para que el boton del joystick gane el control de p3.1
 
     // Disable the GPIO power-on default high-impedance mode to activate
     // previously configured port settings
@@ -198,11 +219,12 @@ void main(void)
     // Configure HAL modules
     HAL_LCD_config();
     HAL_I2C_config();
-    HAL_DIGIN_config();
     HAL_DIGOUT_config();
+
     HAL_UART_config();
     HAL_ADC_config();
     HAL_PWM_config();
+    HAL_DIGIN_config();
 
     // Boton P5.6 de la LaunchPad (ver mi tablero), en vista_tablero.c
     vista_init();
@@ -224,11 +246,13 @@ void main(void)
 
     // El joystick (ADC) se refresca solo en modo continuo
     HAL_ADC_trigger_continuous_conversion();
+    __delay_cycles(160000);
 
     while (1)
     {
-<<<<<<< Updated upstream
-        /* ---------------- Nueva partida ---------------- */
+
+        /*
+         ---------------- Nueva partida ----------------
         uint8_t turno = 0;                       // 0 = PLAYER 1, 1 = PLAYER 2
         uint8_t copia[FILAS_TABLERO][COLS_TABLERO];
         uint8_t resultado, barco;
@@ -275,8 +299,18 @@ void main(void)
 
             turno = rival;
         }
-=======
-        place_ship(&g_sContext);
->>>>>>> Stashed changes
+        */
+
+        while (1)
+        {
+            memset(tableros[0], 0, sizeof(tableros[0]));
+
+            Graphics_clearDisplay(&g_sContext);
+            place_ship_2(&g_sContext, tableros[0]);
+            place_ship_31(&g_sContext, tableros[0]);
+
+            debug_mostrar_matriz(tableros[0]);
+            esperar_S1();   // Se queda mostrando la matriz hasta que pulses S1 otra vez
+        }
     }
 }

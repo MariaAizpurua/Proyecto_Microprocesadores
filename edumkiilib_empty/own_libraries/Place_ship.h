@@ -16,6 +16,7 @@
 
 #include "Pantalla_drw.h"
 
-void place_ship(Graphics_Context *g_sContext);
+void place_ship_2(Graphics_Context *g_sContext, uint8_t info[10][10]);
+void place_ship_31(Graphics_Context *g_sContext, uint8_t info[10][10]);
 
 #endif /* HAL_PLACE_SHIP_H_ */

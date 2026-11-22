@@ -31,9 +31,9 @@ void HAL_DIGIN_config()
     GPIO_enableInterrupt(GPIO_PORT_P4, GPIO_PIN2);
 
     // EDUMKII SEL
-    GPIO_selectInterruptEdge(GPIO_PORT_P3, GPIO_PIN1, GPIO_HIGH_TO_LOW_TRANSITION);
-    GPIO_clearInterrupt(GPIO_PORT_P3, GPIO_PIN1);
-    GPIO_enableInterrupt(GPIO_PORT_P3, GPIO_PIN1);
+    GPIO_selectInterruptEdge(GPIO_PORT_P6, GPIO_PIN2, GPIO_HIGH_TO_LOW_TRANSITION);
+    GPIO_clearInterrupt(GPIO_PORT_P6, GPIO_PIN2);
+    GPIO_enableInterrupt(GPIO_PORT_P6, GPIO_PIN2);
 
     flag_edumkii_S1 = false;
     flag_edumkii_S2 = false;
@@ -63,17 +63,17 @@ __interrupt void port4_isr_handler(void)
     }
 }
 
-#pragma vector=PORT3_VECTOR
-__interrupt void port3_isr_handler(void)
+#pragma vector=PORT6_VECTOR
+__interrupt void port6_isr_handler(void)
 {
     uint16_t status;
 
-    status = GPIO_getInterruptStatus(GPIO_PORT_P3, GPIO_PIN1);
+    status = GPIO_getInterruptStatus(GPIO_PORT_P6, GPIO_PIN2);
 
     // Check joy_SEL
-    if (status & GPIO_PIN1)
+    if (status & GPIO_PIN2)
     {
         flag_edumkii_SEL = true;
-        GPIO_clearInterrupt(GPIO_PORT_P3, GPIO_PIN1);
+        GPIO_clearInterrupt(GPIO_PORT_P6, GPIO_PIN2);
     }
 }
