@@ -8,7 +8,7 @@
 #include "Place_ship.h"
 
 
-static void dibujar_corazon(Graphics_Context *g_sContext, int16_t cx, int16_t cy)
+/*static void dibujar_corazon(Graphics_Context *g_sContext, int16_t cx, int16_t cy)
 {
     int16_t i;
 
@@ -56,9 +56,9 @@ void pantalla_casilla_ocupada(Graphics_Context *g_sContext)
 
     // Restaura el fondo blanco para que el tablero no se quede rosa al volver
     Graphics_setBackgroundColor(g_sContext, GRAPHICS_COLOR_WHITE);
-}
+}*/
 
-/*static void dibujar_alerta(Graphics_Context *g_sContext, int16_t cx, int16_t top_y)
+static void dibujar_alerta(Graphics_Context *g_sContext, int16_t cx, int16_t top_y)
 {
     int16_t i, w;
     Graphics_Rectangle barra, punto;
@@ -125,7 +125,7 @@ void pantalla_casilla_ocupada(Graphics_Context *g_sContext)
 
     // Restaura el fondo blanco para el tablero
     Graphics_setBackgroundColor(g_sContext, GRAPHICS_COLOR_WHITE);
-}*/
+}
 
 void place_ship_2(Graphics_Context *g_sContext, uint8_t info[10][10])
 {
