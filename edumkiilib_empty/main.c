@@ -28,6 +28,7 @@
 #include <hal/hal_digital_input.h>
 #include <hal/hal_digital_output.h>
 #include <hal/hal_uart.h>
+#include <hal/hal_uart_cc.h>
 #include <hal/hal_adc.h>
 #include <hal/hal_pwm.h>
 
@@ -49,10 +50,14 @@
 #include <own_libraries/interfaz_jugar.h>
 #include <own_libraries/vista_tablero.h>
 #include <own_libraries/enlace_marcador.h>
+#include <own_libraries/pantalla_marcador.h>
 
 //Own libraries
 #include <own_libraries/Pantalla_drw.h>
 #include <own_libraries/Place_ship.h>
+
+/* Compilar con 0 en la placa de juego y con 1 en la placa marcador. */
+#define MODO_MARCADOR 0
 
 
 // Global variables
@@ -208,6 +213,7 @@ void main(void)
     HAL_I2C_init_gpio();
     HAL_DIGOUT_init_gpio();
     HAL_UART_init_gpio();
+    HAL_UART_CC_init_gpio();
     HAL_ADC_init_gpio();
     HAL_PWM_init_gpio();        // last on purpose: wins P3.4-P3.7 muxing
     HAL_DIGIN_init_gpio();      //Se retrasa a posta para que el boton del joystick gane el control de p3.1
@@ -222,6 +228,7 @@ void main(void)
     HAL_DIGOUT_config();
 
     HAL_UART_config();
+    HAL_UART_CC_config();
     HAL_ADC_config();
     HAL_PWM_config();
     HAL_DIGIN_config();
@@ -301,16 +308,48 @@ void main(void)
         }
         */
 
+#if MODO_MARCADOR
+        marcador();
         while (1)
+            MARCADOR_receptor_procesar();
+#else
         {
-            memset(tableros[0], 0, sizeof(tableros[0]));
+            uint8_t turno = 0;
+            uint8_t copia[FILAS_TABLERO][COLS_TABLERO];
+            uint8_t resultado, barco;
+            char linea[20];
 
-            Graphics_clearDisplay(&g_sContext);
-            place_ship_2(&g_sContext, tableros[0]);
-            place_ship_31(&g_sContext, tableros[0]);
+            tableros_de_prueba();
+            MARCADOR_enviar_inicio();
+            pantalla_mensaje("HUNDIR LA FLOTA", "", "S1: empezar");
+            esperar_S1();
 
-            debug_mostrar_matriz(tableros[0]);
-            esperar_S1();   // Se queda mostrando la matriz hasta que pulses S1 otra vez
+            while (1)
+            {
+                uint8_t rival = 1 - turno;
+                MARCADOR_enviar_turno(turno);
+                sprintf(linea, "Turno jugador %d", turno + 1);
+                pantalla_mensaje(linea, "S1: disparar", "P5.6: mi tablero");
+                esperar_S1();
+
+                memcpy(copia, tableros[rival], sizeof(copia));
+                Graphics_setFont(&g_sContext, &g_sFontCm12);
+                disparar(tableros[rival], tableros[turno]);
+
+                if (analizar_disparo(copia, tableros[rival], &resultado, &barco))
+                    MARCADOR_enviar_disparo(turno, resultado, barco);
+
+                if (flota_hundida(tableros[rival]))
+                {
+                    MARCADOR_enviar_fin(turno);
+                    sprintf(linea, "Gana jugador %d", turno + 1);
+                    pantalla_mensaje(linea, "Flota hundida", "S1: nueva partida");
+                    esperar_S1();
+                    break;
+                }
+                turno = rival;
+            }
         }
+#endif
     }
 }

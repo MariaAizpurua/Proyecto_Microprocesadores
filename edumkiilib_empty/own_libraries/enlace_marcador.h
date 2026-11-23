@@ -47,11 +47,8 @@
 
 #include <stdint.h>
 
-/* Poner a 1 cuando el marcador este conectado. Con 0 no se envia nada.
- * TODO: el enlace ira por otra UART (no la HAL_UART actual, que va al USB
- * del PC) y mas adelante por antena. Cuando se decida, solo hay que
- * cambiar enviar_trama() en enlace_marcador.c. */
-#define MARCADOR_ENVIO_ACTIVO   0
+/* Envia por UCA3 hacia el CC1310 (P6.0/P6.1). */
+#define MARCADOR_ENVIO_ACTIVO   1
 
 #define MARCADOR_INICIO_TRAMA   0xAA
 
@@ -72,5 +69,8 @@ void MARCADOR_enviar_inicio(void);
 void MARCADOR_enviar_turno(uint8_t jugador);
 void MARCADOR_enviar_disparo(uint8_t jugador, uint8_t resultado, uint8_t barco);
 void MARCADOR_enviar_fin(uint8_t ganador);
+
+/* Llamar repetidamente desde el bucle principal de la placa marcador. */
+void MARCADOR_receptor_procesar(void);
 
 #endif /* ENLACE_MARCADOR_H_ */
