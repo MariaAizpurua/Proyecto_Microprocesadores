@@ -59,6 +59,10 @@
 /* Compilar con 0 en la placa de juego y con 1 en la placa marcador. */
 #define MODO_MARCADOR 0
 
+/* 1 = tableros fijos (para probar rapido la radio sin colocar barcos),
+ * 0 = cada jugador coloca sus barcos con Place_ship. */
+#define USAR_TABLEROS_DE_PRUEBA 0
+
 
 // Global variables
 Graphics_Context g_sContext;
@@ -118,6 +122,32 @@ static void pantalla_mensaje(const char *l1, const char *l2, const char *l3)
 static void esperar_S1(void)
 {
     while (!SWITCH_get_edumkii_S1());
+}
+
+/* ------------------------------------------------------------------
+ * Colocacion de barcos con Place_ship (parte de Jon).
+ * Antes sale una pantalla de paso para que el otro jugador no mire.
+ * Cada place_ship_X guarda en el tablero el id de tablero.h:
+ *   place_ship_2 -> 1, _31 -> 2, _32 -> 3, _4 -> 4, _5 -> 5
+ * ------------------------------------------------------------------ */
+static void colocar_flota(uint8_t t[FILAS_TABLERO][COLS_TABLERO], uint8_t jugador)
+{
+    char linea[20];
+
+    memset(t, AGUA, FILAS_TABLERO * COLS_TABLERO);
+
+    sprintf(linea, "Jugador %d", jugador + 1);
+    pantalla_mensaje(linea, "Coloca tus barcos", "S1: empezar");
+    esperar_S1();
+
+    Graphics_setBackgroundColor(&g_sContext, GRAPHICS_COLOR_WHITE);
+    Graphics_clearDisplay(&g_sContext);
+
+    place_ship_2 (&g_sContext, t);
+    place_ship_31(&g_sContext, t);
+    place_ship_32(&g_sContext, t);
+    place_ship_4 (&g_sContext, t);
+    place_ship_5 (&g_sContext, t);
 }
 
 /* ------------------------------------------------------------------
@@ -319,10 +349,16 @@ void main(void)
             uint8_t resultado, barco;
             char linea[20];
 
-            tableros_de_prueba();
             MARCADOR_enviar_inicio();
             pantalla_mensaje("HUNDIR LA FLOTA", "", "S1: empezar");
             esperar_S1();
+
+#if USAR_TABLEROS_DE_PRUEBA
+            tableros_de_prueba();
+#else
+            colocar_flota(tableros[0], 0);
+            colocar_flota(tableros[1], 1);
+#endif
 
             while (1)
             {
