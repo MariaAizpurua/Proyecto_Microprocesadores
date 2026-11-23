@@ -38,7 +38,8 @@ static void redibujar_disparo(uint8_t tablero[10][10], int posX, int posY,
     Graphics_fillRectangle(&g_sContext, rect);
 }
 
-void disparar(uint8_t tablero[10][10], uint8_t mi_tablero[10][10]){
+bool seleccionar_disparo(uint8_t tablero[10][10], uint8_t mi_tablero[10][10],
+                         uint8_t *fila_elegida, uint8_t *columna_elegida){
 
     int fin=0;
     while(!fin){
@@ -250,69 +251,20 @@ void disparar(uint8_t tablero[10][10], uint8_t mi_tablero[10][10]){
                 }
 
             while (SWITCH_get_edumkii_S1());
-            int i,j,cont=0,valor;
-            switch (tablero[posY][posX]){
-            case 0: //Agua
-                fin=1;
-                tablero[posY][posX]=12;
+            if (tablero[posY][posX] != 0)
+            {
                 Graphics_clearDisplay(&g_sContext);
-                Graphics_drawStringCentered(&g_sContext,(int8_t*)"Agua", AUTO_STRING_LENGTH,64,30,false);
-                break;
-            case 1: case 2: case 3: case 4: case 5:
-                fin=1;// Barcos
-                valor= tablero[posY][posX];
-                tablero[posY][posX]+=5;
-                cont=0;
-
-               for (i=0;i<10;i++){ //Checkear si es tocado o hundido
-                   for(j=0;j<10;j++){
-                       if(tablero[i][j] == valor){
-                           cont++;
-                       }
-                   }
-               }
-                if (cont){
-                    Graphics_clearDisplay(&g_sContext);
-                    Graphics_drawStringCentered(&g_sContext,(int8_t*)"Tocado", AUTO_STRING_LENGTH,64,30,false);
-                }else{
-                    for (i=0;i<10;i++){ //Checkear si es tocado o hundido
-                       for(j=0;j<10;j++){
-                           if(tablero[i][j] == valor+5){
-                               tablero[i][j]=11;
-                           }
-                       }
-                    }
-
-                    Graphics_clearDisplay(&g_sContext);
-                    Graphics_drawStringCentered(&g_sContext,(int8_t*)"Hundido", AUTO_STRING_LENGTH,64,30,false);
-
-
-                }
-                break;
-
-
-            case 6: case 7: case 8: case 9: case 10: //Barco tocado
-                Graphics_clearDisplay(&g_sContext);
-                Graphics_drawStringCentered(&g_sContext,(int8_t*)"Barco ya Tocado", AUTO_STRING_LENGTH,64,30,false);
-                Graphics_drawStringCentered(&g_sContext,(int8_t*)"Elija otra", AUTO_STRING_LENGTH,64,50,false);
-                break;
-            case 11: // Barco hundido
-                Graphics_clearDisplay(&g_sContext);
-                Graphics_drawStringCentered(&g_sContext,(int8_t*)"Barco ya Hundido", AUTO_STRING_LENGTH,64,30,false);
-                Graphics_drawStringCentered(&g_sContext,(int8_t*)"Elija otra", AUTO_STRING_LENGTH,64,50,false);
-                break;
-            case 12: // Bomba fallida
-                Graphics_clearDisplay(&g_sContext);
-                Graphics_drawStringCentered(&g_sContext,(int8_t*)"Bomba ya tirada", AUTO_STRING_LENGTH,64,30,false);
-                Graphics_drawStringCentered(&g_sContext,(int8_t*)"Elija otra", AUTO_STRING_LENGTH,64,50,false);
-                break;
-
-
-
-
-
+                Graphics_drawStringCentered(&g_sContext,(int8_t*)"Ya disparaste ahi",
+                                            AUTO_STRING_LENGTH,64,35,false);
+                Graphics_drawStringCentered(&g_sContext,(int8_t*)"Elige otra casilla",
+                                            AUTO_STRING_LENGTH,64,55,false);
+                __delay_cycles(16000000);
+                continue;
             }
-            __delay_cycles(32000000);
+
+            *fila_elegida = (uint8_t)posY;
+            *columna_elegida = (uint8_t)posX;
+            return true;
 
 
         }
@@ -321,6 +273,7 @@ void disparar(uint8_t tablero[10][10], uint8_t mi_tablero[10][10]){
 
 
 
+    return false;
 }
 
 

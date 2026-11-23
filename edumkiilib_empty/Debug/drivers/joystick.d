@@ -1,174 +1,174 @@
 # FIXED
 
 drivers/joystick.obj: ../drivers/joystick.c
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/hal/hal_adc.h
-drivers/joystick.obj: C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/stdint.h
-drivers/joystick.obj: C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/_ti_config.h
-drivers/joystick.obj: C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/linkage.h
-drivers/joystick.obj: C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/_stdint40.h
-drivers/joystick.obj: C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/sys/stdint.h
-drivers/joystick.obj: C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/sys/cdefs.h
-drivers/joystick.obj: C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/sys/_types.h
-drivers/joystick.obj: C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/machine/_types.h
-drivers/joystick.obj: C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/machine/_stdint.h
-drivers/joystick.obj: C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/sys/_stdint.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/hal/hal_digital_input.h
-drivers/joystick.obj: C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/stdbool.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/driverlib.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/inc/hw_memmap.h
-drivers/joystick.obj: C:/Users/galbe/Desktop/ccs/ccs_base/msp430/include/msp430.h
-drivers/joystick.obj: C:/Users/galbe/Desktop/ccs/ccs_base/msp430/include/msp430fr5994.h
-drivers/joystick.obj: C:/Users/galbe/Desktop/ccs/ccs_base/msp430/include/in430.h
-drivers/joystick.obj: C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/intrinsics.h
-drivers/joystick.obj: C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/intrinsics_legacy_undefs.h
-drivers/joystick.obj: C:/Users/galbe/Desktop/ccs/ccs_base/msp430/include/legacy.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/esi.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/eusci_b_i2c.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/cs.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/aes256.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/uups.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/framctl_a.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/timer_b.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/framctl.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/eusci_a_spi.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/eusci_a_uart.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/tlv.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/timer_a.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/pmm.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/adc12_b.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/sysctl.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/sfr.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/ref_a.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/mpy32.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/wdt_a.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/saph.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/crc32.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/mpu.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/mtif.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/lcd_c.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/rtc_c.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/gpio.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/rtc_b.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/comp_e.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/ram.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/saph_a.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/dma.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/hspll.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/eusci_b_spi.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/sdhs.h
-drivers/joystick.obj: C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/crc.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/hal/hal_adc.h
+drivers/joystick.obj: C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/stdint.h
+drivers/joystick.obj: C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/_ti_config.h
+drivers/joystick.obj: C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/linkage.h
+drivers/joystick.obj: C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/_stdint40.h
+drivers/joystick.obj: C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/sys/stdint.h
+drivers/joystick.obj: C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/sys/cdefs.h
+drivers/joystick.obj: C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/sys/_types.h
+drivers/joystick.obj: C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/machine/_types.h
+drivers/joystick.obj: C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/machine/_stdint.h
+drivers/joystick.obj: C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/sys/_stdint.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/hal/hal_digital_input.h
+drivers/joystick.obj: C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/stdbool.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/driverlib.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/inc/hw_memmap.h
+drivers/joystick.obj: C:/ti/ccs1200/ccs/ccs_base/msp430/include/msp430.h
+drivers/joystick.obj: C:/ti/ccs1200/ccs/ccs_base/msp430/include/msp430fr5994.h
+drivers/joystick.obj: C:/ti/ccs1200/ccs/ccs_base/msp430/include/in430.h
+drivers/joystick.obj: C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/intrinsics.h
+drivers/joystick.obj: C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/intrinsics_legacy_undefs.h
+drivers/joystick.obj: C:/ti/ccs1200/ccs/ccs_base/msp430/include/legacy.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/esi.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/eusci_b_i2c.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/cs.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/aes256.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/uups.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/framctl_a.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/timer_b.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/framctl.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/eusci_a_spi.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/eusci_a_uart.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/tlv.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/timer_a.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/pmm.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/adc12_b.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/sysctl.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/sfr.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/ref_a.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/mpy32.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/wdt_a.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/saph.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/crc32.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/mpu.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/mtif.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/lcd_c.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/rtc_c.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/gpio.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/rtc_b.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/comp_e.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/ram.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/saph_a.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/dma.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/hspll.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/eusci_b_spi.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/sdhs.h
+drivers/joystick.obj: C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/crc.h
 
 ../drivers/joystick.c:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/hal/hal_adc.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/hal/hal_adc.h:
 
-C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/stdint.h:
+C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/stdint.h:
 
-C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/_ti_config.h:
+C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/_ti_config.h:
 
-C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/linkage.h:
+C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/linkage.h:
 
-C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/_stdint40.h:
+C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/_stdint40.h:
 
-C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/sys/stdint.h:
+C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/sys/stdint.h:
 
-C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/sys/cdefs.h:
+C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/sys/cdefs.h:
 
-C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/sys/_types.h:
+C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/sys/_types.h:
 
-C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/machine/_types.h:
+C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/machine/_types.h:
 
-C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/machine/_stdint.h:
+C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/machine/_stdint.h:
 
-C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/sys/_stdint.h:
+C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/sys/_stdint.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/hal/hal_digital_input.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/hal/hal_digital_input.h:
 
-C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/stdbool.h:
+C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/stdbool.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/driverlib.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/driverlib.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/inc/hw_memmap.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/inc/hw_memmap.h:
 
-C:/Users/galbe/Desktop/ccs/ccs_base/msp430/include/msp430.h:
+C:/ti/ccs1200/ccs/ccs_base/msp430/include/msp430.h:
 
-C:/Users/galbe/Desktop/ccs/ccs_base/msp430/include/msp430fr5994.h:
+C:/ti/ccs1200/ccs/ccs_base/msp430/include/msp430fr5994.h:
 
-C:/Users/galbe/Desktop/ccs/ccs_base/msp430/include/in430.h:
+C:/ti/ccs1200/ccs/ccs_base/msp430/include/in430.h:
 
-C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/intrinsics.h:
+C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/intrinsics.h:
 
-C:/Users/galbe/Desktop/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/intrinsics_legacy_undefs.h:
+C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/intrinsics_legacy_undefs.h:
 
-C:/Users/galbe/Desktop/ccs/ccs_base/msp430/include/legacy.h:
+C:/ti/ccs1200/ccs/ccs_base/msp430/include/legacy.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/esi.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/esi.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/eusci_b_i2c.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/eusci_b_i2c.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/cs.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/cs.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/aes256.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/aes256.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/uups.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/uups.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/framctl_a.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/framctl_a.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/timer_b.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/timer_b.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/framctl.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/framctl.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/eusci_a_spi.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/eusci_a_spi.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/eusci_a_uart.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/eusci_a_uart.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/tlv.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/tlv.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/timer_a.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/timer_a.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/pmm.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/pmm.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/adc12_b.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/adc12_b.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/sysctl.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/sysctl.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/sfr.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/sfr.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/ref_a.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/ref_a.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/mpy32.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/mpy32.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/wdt_a.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/wdt_a.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/saph.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/saph.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/crc32.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/crc32.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/mpu.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/mpu.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/mtif.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/mtif.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/lcd_c.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/lcd_c.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/rtc_c.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/rtc_c.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/gpio.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/gpio.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/rtc_b.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/rtc_b.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/comp_e.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/comp_e.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/ram.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/ram.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/saph_a.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/saph_a.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/dma.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/dma.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/hspll.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/hspll.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/eusci_b_spi.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/eusci_b_spi.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/sdhs.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/sdhs.h:
 
-C:/Users/galbe/Micropros/Proyecto/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/crc.h:
+C:/Tecnun/4.\ Cuarto/Microprocesadores/Proyecto_Microprocesadores/edumkiilib_empty/_ti_driverlib_2.91.13.01/crc.h:
 

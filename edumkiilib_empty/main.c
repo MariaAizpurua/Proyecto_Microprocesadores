@@ -59,6 +59,11 @@
 /* Compilar con 0 en la placa de juego y con 1 en la placa marcador. */
 #define MODO_MARCADOR 0
 
+/* Para una partida entre dos MSP430: compilar uno con 0 y el otro con 1. */
+#ifndef JUGADOR_LOCAL
+#define JUGADOR_LOCAL 1
+#endif
+
 /* 1 = tableros fijos (para probar rapido la radio sin colocar barcos),
  * 0 = cada jugador coloca sus barcos con Place_ship. */
 #define USAR_TABLEROS_DE_PRUEBA 0
@@ -86,23 +91,26 @@ static void colocar_barco(uint8_t t[FILAS_TABLERO][COLS_TABLERO],
     }
 }
 
-static void tableros_de_prueba(void)
+static void tablero_de_prueba(uint8_t t[FILAS_TABLERO][COLS_TABLERO], uint8_t jugador)
 {
-    memset(tableros, AGUA, sizeof(tableros));
+    memset(t, AGUA, FILAS_TABLERO * COLS_TABLERO);
 
-    // Jugador 1 (fila A..J = 0..9, columna 1..10 = 0..9)
-    colocar_barco(tableros[0], BARCO_2,  2, 0, 0, true);   // A1-A2
-    colocar_barco(tableros[0], BARCO_3A, 3, 2, 2, false);  // C3-E3
-    colocar_barco(tableros[0], BARCO_3B, 3, 1, 5, true);   // B6-B8
-    colocar_barco(tableros[0], BARCO_4,  4, 6, 1, true);   // G2-G5
-    colocar_barco(tableros[0], BARCO_5,  5, 4, 9, false);  // E10-I10
-
-    // Jugador 2
-    colocar_barco(tableros[1], BARCO_2,  2, 9, 8, true);   // J9-J10
-    colocar_barco(tableros[1], BARCO_3A, 3, 0, 0, false);  // A1-C1
-    colocar_barco(tableros[1], BARCO_3B, 3, 4, 4, true);   // E5-E7
-    colocar_barco(tableros[1], BARCO_4,  4, 1, 7, false);  // B8-E8
-    colocar_barco(tableros[1], BARCO_5,  5, 8, 1, true);   // I2-I6
+    if (jugador == 0)
+    {
+        colocar_barco(t, BARCO_2,  2, 0, 0, true);
+        colocar_barco(t, BARCO_3A, 3, 2, 2, false);
+        colocar_barco(t, BARCO_3B, 3, 1, 5, true);
+        colocar_barco(t, BARCO_4,  4, 6, 1, true);
+        colocar_barco(t, BARCO_5,  5, 4, 9, false);
+    }
+    else
+    {
+        colocar_barco(t, BARCO_2,  2, 9, 8, true);
+        colocar_barco(t, BARCO_3A, 3, 0, 0, false);
+        colocar_barco(t, BARCO_3B, 3, 4, 4, true);
+        colocar_barco(t, BARCO_4,  4, 1, 7, false);
+        colocar_barco(t, BARCO_5,  5, 8, 1, true);
+    }
 }
 
 /* ------------------------------------------------------------------
@@ -150,43 +158,6 @@ static void colocar_flota(uint8_t t[FILAS_TABLERO][COLS_TABLERO], uint8_t jugado
     place_ship_5 (&g_sContext, t);
 }
 
-/* ------------------------------------------------------------------
- * Compara el tablero antes y despues de disparar() para saber que ha
- * pasado (disparar() no lo devuelve). Asi no hace falta tocar su codigo.
- * Devuelve false si no ha cambiado ninguna casilla.
- * ------------------------------------------------------------------ */
-static bool analizar_disparo(uint8_t antes[FILAS_TABLERO][COLS_TABLERO],
-                             uint8_t despues[FILAS_TABLERO][COLS_TABLERO],
-                             uint8_t *resultado, uint8_t *barco)
-{
-    uint8_t x, y, a;
-
-    for (y = 0; y < FILAS_TABLERO; y++)
-    {
-        for (x = 0; x < COLS_TABLERO; x++)
-        {
-            a = antes[y][x];
-            // La casilla disparada es la unica que era agua o barco intacto
-            // y ha cambiado (las demas que cambian, al hundir, eran tocadas)
-            if (a != despues[y][x] && (a == AGUA || ES_BARCO_INTACTO(a)))
-            {
-                if (a == AGUA)
-                {
-                    *resultado = RES_AGUA;
-                    *barco = BARCO_NINGUNO;
-                }
-                else
-                {
-                    *resultado = (despues[y][x] == HUNDIDO) ? RES_HUNDIDO : RES_TOCADO;
-                    *barco = a - 1;     // indice 0..4 del marcador
-                }
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
 static bool flota_hundida(uint8_t t[FILAS_TABLERO][COLS_TABLERO])
 {
     uint8_t x, y;
@@ -195,6 +166,274 @@ static bool flota_hundida(uint8_t t[FILAS_TABLERO][COLS_TABLERO])
             if (ES_BARCO_INTACTO(t[y][x]))
                 return false;
     return true;
+}
+
+static void esperar_ms(uint16_t ms)
+{
+    while (ms--)
+        __delay_cycles(16000);
+}
+
+static bool recibir_trama_timeout(uint8_t trama[5], uint16_t timeout_ms)
+{
+    while (timeout_ms--)
+    {
+        if (ENLACE_recibir_trama(trama))
+            return true;
+        esperar_ms(1);
+    }
+    return false;
+}
+
+static void iniciar_enlace_juego(uint8_t jugador)
+{
+    uint8_t trama[5];
+
+    pantalla_mensaje("Listo para jugar", "Jugador 2 pulsa S1", "Despues jugador 1");
+    esperar_S1();
+
+    if (jugador == 0)
+    {
+        pantalla_mensaje("Buscando jugador 2", "Esperando enlace", "No apagues la radio");
+        while (1)
+        {
+            if (recibir_trama_timeout(trama, 1000) &&
+                trama[1] == CMD_ACK_LISTO && trama[2] == 1)
+                return;
+
+            ENLACE_enviar_listo(0);
+        }
+    }
+
+    pantalla_mensaje("Esperando jugador 1", "Preparando enlace", "No apagues la radio");
+    while (1)
+    {
+        if (recibir_trama_timeout(trama, 1000) &&
+            trama[1] == CMD_LISTO && trama[2] == 0)
+        {
+            ENLACE_enviar_ack_listo(1);
+            return;
+        }
+    }
+}
+
+/* Convierte el disparo recibido contra la unica flota almacenada en esta placa. */
+static uint8_t resolver_disparo(uint8_t flota[FILAS_TABLERO][COLS_TABLERO],
+                                uint8_t casilla)
+{
+    uint8_t fila = casilla / COLS_TABLERO;
+    uint8_t col = casilla % COLS_TABLERO;
+    uint8_t valor = flota[fila][col];
+    uint8_t x, y, restantes = 0;
+
+    if (valor == AGUA)
+    {
+        flota[fila][col] = BOMBA_FALLIDA;
+        return RES_AGUA;
+    }
+
+    if (!ES_BARCO_INTACTO(valor))
+        return RESULTADO_INVALIDO;
+
+    flota[fila][col] = valor + OFFSET_TOCADO;
+    for (y = 0; y < FILAS_TABLERO; y++)
+        for (x = 0; x < COLS_TABLERO; x++)
+            if (flota[y][x] == valor)
+                restantes++;
+
+    return restantes ? valor : (uint8_t)(valor + OFFSET_TOCADO);
+}
+
+static uint8_t responder_disparo(uint8_t trama[5],
+                                 uint8_t flota[FILAS_TABLERO][COLS_TABLERO],
+                                 bool *hay_anterior, uint8_t *seq_anterior,
+                                 uint8_t *casilla_anterior, uint8_t *resultado_anterior)
+{
+    uint8_t seq = trama[3];
+    uint8_t casilla = trama[4];
+    uint8_t resultado;
+
+    if (*hay_anterior && seq == *seq_anterior && casilla == *casilla_anterior)
+        resultado = *resultado_anterior;       /* reenvio de una peticion repetida */
+    else if (casilla < FILAS_TABLERO * COLS_TABLERO)
+    {
+        resultado = resolver_disparo(flota, casilla);
+        if (resultado != RESULTADO_INVALIDO)
+        {
+            *hay_anterior = true;
+            *seq_anterior = seq;
+            *casilla_anterior = casilla;
+            *resultado_anterior = resultado;
+        }
+    }
+    else
+        resultado = RESULTADO_INVALIDO;
+
+    return resultado;
+}
+
+static void esperar_ack_resultado(uint8_t jugador, uint8_t seq,
+                                  uint8_t casilla, uint8_t resultado,
+                                  uint8_t flota[FILAS_TABLERO][COLS_TABLERO],
+                                  bool *hay_anterior, uint8_t *seq_anterior,
+                                  uint8_t *casilla_anterior,
+                                  uint8_t *resultado_anterior)
+{
+    uint8_t trama[5];
+
+    while (1)
+    {
+        ENLACE_enviar_resultado(jugador, seq, resultado);
+        if (!recibir_trama_timeout(trama, 1000))
+            continue;
+
+        if (trama[1] == CMD_ACK_RESULTADO && trama[2] == jugador && trama[3] == seq)
+            return;
+
+        if (trama[1] == CMD_DISPARO_RX && trama[2] == jugador &&
+            trama[3] == seq && trama[4] == casilla)
+        {
+            /* La peticion original se repitio: el resultado se reenviara arriba. */
+            responder_disparo(trama, flota, hay_anterior, seq_anterior,
+                              casilla_anterior, resultado_anterior);
+        }
+    }
+}
+
+static void actualizar_objetivo(uint8_t objetivo[FILAS_TABLERO][COLS_TABLERO],
+                                uint8_t casilla, uint8_t resultado)
+{
+    uint8_t fila = casilla / COLS_TABLERO;
+    uint8_t col = casilla % COLS_TABLERO;
+    uint8_t barco, x, y;
+
+    if (resultado == RES_AGUA)
+    {
+        objetivo[fila][col] = BOMBA_FALLIDA;
+        return;
+    }
+
+    if (resultado >= 1 && resultado <= NUM_BARCOS)
+    {
+        objetivo[fila][col] = resultado + OFFSET_TOCADO;
+        return;
+    }
+
+    if (resultado > NUM_BARCOS && resultado <= 2 * NUM_BARCOS)
+    {
+        barco = resultado - NUM_BARCOS;
+        objetivo[fila][col] = HUNDIDO;
+        for (y = 0; y < FILAS_TABLERO; y++)
+            for (x = 0; x < COLS_TABLERO; x++)
+                if (objetivo[y][x] == barco + OFFSET_TOCADO)
+                    objetivo[y][x] = HUNDIDO;
+    }
+}
+
+static bool flota_rival_hundida(uint8_t objetivo[FILAS_TABLERO][COLS_TABLERO])
+{
+    uint8_t x, y, hundidas = 0;
+    for (y = 0; y < FILAS_TABLERO; y++)
+        for (x = 0; x < COLS_TABLERO; x++)
+            if (objetivo[y][x] == HUNDIDO)
+                hundidas++;
+    return hundidas == 17; /* longitud total: 2+3+3+4+5 */
+}
+
+static void esperar_disparo_rival(uint8_t jugador,
+                                  uint8_t flota[FILAS_TABLERO][COLS_TABLERO],
+                                  bool *hay_anterior, uint8_t *seq_anterior,
+                                  uint8_t *casilla_anterior, uint8_t *resultado_anterior)
+{
+    uint8_t trama[5];
+    while (1)
+    {
+        if (!ENLACE_recibir_trama(trama))
+        {
+            esperar_ms(1);
+            continue;
+        }
+
+        if (trama[1] == CMD_LISTO && trama[2] == 0 && jugador == 1)
+        {
+            ENLACE_enviar_ack_listo(1); /* ACK perdido: repetir */
+            continue;
+        }
+
+        if (trama[1] == CMD_RESULTADO && trama[2] == (uint8_t)(1 - jugador) &&
+            *hay_anterior && trama[3] == *seq_anterior)
+        {
+            ENLACE_enviar_ack_resultado(trama[2], trama[3]);
+            continue;
+        }
+
+        if (trama[1] == CMD_DISPARO_RX && trama[2] == (uint8_t)(1 - jugador) &&
+            trama[4] < FILAS_TABLERO * COLS_TABLERO)
+        {
+            uint8_t fila = trama[4] / COLS_TABLERO;
+            uint8_t col = trama[4] % COLS_TABLERO;
+            uint8_t resultado;
+            char mensaje[20];
+
+            resultado = responder_disparo(trama, flota, hay_anterior, seq_anterior,
+                                          casilla_anterior, resultado_anterior);
+            sprintf(mensaje, "Disparo en %c%d", 'A' + fila, col + 1);
+            pantalla_mensaje(mensaje, resultado == RES_AGUA ? "Agua" : "Te han tocado", "Tu turno despues");
+            esperar_ack_resultado(trama[2], trama[3], trama[4], resultado, flota,
+                                  hay_anterior, seq_anterior, casilla_anterior,
+                                  resultado_anterior);
+            return;
+        }
+    }
+}
+
+/* Al ganar, sigue confirmando el resultado por si se perdio el primer ACK. */
+static void mantener_pantalla_ganador(uint8_t jugador)
+{
+    uint8_t trama[5];
+    while (1)
+    {
+        if (ENLACE_recibir_trama(trama) && trama[1] == CMD_RESULTADO &&
+            trama[2] == jugador)
+            ENLACE_enviar_ack_resultado(jugador, trama[3]);
+        esperar_ms(1);
+    }
+}
+
+static uint8_t enviar_disparo_y_esperar(uint8_t jugador, uint8_t secuencia,
+                                        uint8_t casilla,
+                                        uint8_t flota[FILAS_TABLERO][COLS_TABLERO],
+                                        bool *hay_anterior, uint8_t *seq_anterior,
+                                        uint8_t *casilla_anterior,
+                                        uint8_t *resultado_anterior)
+{
+    uint8_t trama[5];
+
+    while (1)
+    {
+        ENLACE_enviar_disparo(jugador, secuencia, casilla);
+        if (!recibir_trama_timeout(trama, 1000))
+            continue; /* no hubo respuesta: repetir el mismo disparo */
+
+        if (trama[1] == CMD_RESULTADO && trama[2] == jugador &&
+            trama[3] == secuencia && trama[4] <= 2 * NUM_BARCOS)
+        {
+            ENLACE_enviar_ack_resultado(jugador, secuencia);
+            return trama[4];
+        }
+
+        /* Una petición anterior repetida se contesta aunque estemos jugando. */
+        if (trama[1] == CMD_DISPARO_RX && trama[2] == (uint8_t)(1 - jugador) &&
+            trama[4] < FILAS_TABLERO * COLS_TABLERO)
+        {
+            uint8_t resultado_rival = responder_disparo(trama, flota, hay_anterior,
+                                                       seq_anterior, casilla_anterior,
+                                                       resultado_anterior);
+            esperar_ack_resultado(trama[2], trama[3], trama[4], resultado_rival,
+                                  flota, hay_anterior, seq_anterior,
+                                  casilla_anterior, resultado_anterior);
+        }
+    }
 }
 
 static void debug_mostrar_matriz(uint8_t t[FILAS_TABLERO][COLS_TABLERO])
@@ -344,46 +583,80 @@ void main(void)
             MARCADOR_receptor_procesar();
 #else
         {
-            uint8_t turno = 0;
-            uint8_t copia[FILAS_TABLERO][COLS_TABLERO];
-            uint8_t resultado, barco;
+            uint8_t jugador = JUGADOR_LOCAL;
+            uint8_t fila, columna, casilla, resultado;
+            uint8_t secuencia = 0;
+            uint8_t seq_anterior = 0, casilla_anterior = 0;
+            uint8_t resultado_anterior = RESULTADO_INVALIDO;
+            bool hay_anterior = false;
+            bool turno_local;
             char linea[20];
 
-            MARCADOR_enviar_inicio();
-            pantalla_mensaje("HUNDIR LA FLOTA", "", "S1: empezar");
-            esperar_S1();
+            if (jugador > 1)
+                jugador = 0;
+            memset(tableros, AGUA, sizeof(tableros));
 
 #if USAR_TABLEROS_DE_PRUEBA
-            tableros_de_prueba();
+            tablero_de_prueba(tableros[jugador], jugador);
 #else
-            colocar_flota(tableros[0], 0);
-            colocar_flota(tableros[1], 1);
+            colocar_flota(tableros[jugador], jugador);
 #endif
+
+            iniciar_enlace_juego(jugador);
+            turno_local = (jugador == 0); /* jugador 1 empieza */
 
             while (1)
             {
-                uint8_t rival = 1 - turno;
-                MARCADOR_enviar_turno(turno);
-                sprintf(linea, "Turno jugador %d", turno + 1);
-                pantalla_mensaje(linea, "S1: disparar", "P5.6: mi tablero");
-                esperar_S1();
-
-                memcpy(copia, tableros[rival], sizeof(copia));
-                Graphics_setFont(&g_sContext, &g_sFontCm12);
-                disparar(tableros[rival], tableros[turno]);
-
-                if (analizar_disparo(copia, tableros[rival], &resultado, &barco))
-                    MARCADOR_enviar_disparo(turno, resultado, barco);
-
-                if (flota_hundida(tableros[rival]))
+                if (turno_local)
                 {
-                    MARCADOR_enviar_fin(turno);
-                    sprintf(linea, "Gana jugador %d", turno + 1);
-                    pantalla_mensaje(linea, "Flota hundida", "S1: nueva partida");
-                    esperar_S1();
-                    break;
+                    sprintf(linea, "Turno jugador %d", jugador + 1);
+                    pantalla_mensaje(linea, "Elige una casilla", "P5.6: mi tablero");
+
+                    if (!seleccionar_disparo(tableros[1 - jugador], tableros[jugador],
+                                             &fila, &columna))
+                        continue;
+
+                    casilla = fila * COLS_TABLERO + columna;
+                    pantalla_mensaje("Disparo enviado", "Esperando respuesta", "No apagues la radio");
+                    resultado = enviar_disparo_y_esperar(jugador, secuencia, casilla,
+                                                         tableros[jugador], &hay_anterior,
+                                                         &seq_anterior, &casilla_anterior,
+                                                         &resultado_anterior);
+                    secuencia = (secuencia + 1) % 100;
+
+                    if (resultado == RESULTADO_INVALIDO)
+                        continue;
+
+                    actualizar_objetivo(tableros[1 - jugador], casilla, resultado);
+                    if (resultado == RES_AGUA)
+                        pantalla_mensaje("Agua", "", "Turno del rival");
+                    else if (resultado <= NUM_BARCOS)
+                        pantalla_mensaje("Tocado", "", "Turno del rival");
+                    else
+                        pantalla_mensaje("Hundido", "", "Turno del rival");
+                    esperar_ms(1200);
+
+                    if (flota_rival_hundida(tableros[1 - jugador]))
+                    {
+                        pantalla_mensaje("Has ganado", "Flota rival hundida", "Reinicia ambas placas");
+                        mantener_pantalla_ganador(jugador);
+                    }
+                    turno_local = false;
                 }
-                turno = rival;
+                else
+                {
+                    pantalla_mensaje("Turno del rival", "Esperando disparo", "No apagues la radio");
+                    esperar_disparo_rival(jugador, tableros[jugador], &hay_anterior,
+                                          &seq_anterior, &casilla_anterior,
+                                          &resultado_anterior);
+
+                    if (flota_hundida(tableros[jugador]))
+                    {
+                        pantalla_mensaje("Has perdido", "Tu flota hundida", "Reinicia ambas placas");
+                        while (1) { }
+                    }
+                    turno_local = true;
+                }
             }
         }
 #endif

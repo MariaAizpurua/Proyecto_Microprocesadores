@@ -7,6 +7,84 @@
 #include "enlace_marcador.h"
 #include <hal/hal_uart_cc.h>
 #include "pantalla_marcador.h"
+#include <string.h>
+
+bool ENLACE_recibir_trama(uint8_t trama_salida[5])
+{
+    static uint8_t trama[5];
+    static uint8_t posicion;
+
+    while (HAL_UART_CC_data_available())
+    {
+        uint8_t byte = HAL_UART_CC_rx_byte();
+        if (posicion == 0)
+        {
+            if (byte == MARCADOR_INICIO_TRAMA)
+                trama[posicion++] = byte;
+            continue;
+        }
+
+        /* En este protocolo los bytes de datos no pueden valer 0xAA. */
+        if (byte == MARCADOR_INICIO_TRAMA)
+        {
+            trama[0] = byte;
+            posicion = 1;
+            continue;
+        }
+
+        trama[posicion++] = byte;
+        if (posicion == sizeof(trama))
+        {
+            memcpy(trama_salida, trama, sizeof(trama));
+            posicion = 0;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static void enviar_trama_protocolo(uint8_t comando, uint8_t jugador,
+                                   uint8_t dato1, uint8_t dato2)
+{
+#if MARCADOR_ENVIO_ACTIVO
+    HAL_UART_CC_tx_byte(MARCADOR_INICIO_TRAMA);
+    HAL_UART_CC_tx_byte(comando);
+    HAL_UART_CC_tx_byte(jugador);
+    HAL_UART_CC_tx_byte(dato1);
+    HAL_UART_CC_tx_byte(dato2);
+#else
+    (void)comando;
+    (void)jugador;
+    (void)dato1;
+    (void)dato2;
+#endif
+}
+
+void ENLACE_enviar_listo(uint8_t jugador)
+{
+    enviar_trama_protocolo(CMD_LISTO, jugador, 0, 0);
+}
+
+void ENLACE_enviar_ack_listo(uint8_t jugador)
+{
+    enviar_trama_protocolo(CMD_ACK_LISTO, jugador, 0, 0);
+}
+
+void ENLACE_enviar_disparo(uint8_t jugador, uint8_t secuencia, uint8_t casilla)
+{
+    enviar_trama_protocolo(CMD_DISPARO_RX, jugador, secuencia, casilla);
+}
+
+void ENLACE_enviar_resultado(uint8_t jugador, uint8_t secuencia, uint8_t resultado)
+{
+    enviar_trama_protocolo(CMD_RESULTADO, jugador, secuencia, resultado);
+}
+
+void ENLACE_enviar_ack_resultado(uint8_t jugador, uint8_t secuencia)
+{
+    enviar_trama_protocolo(CMD_ACK_RESULTADO, jugador, secuencia, 0);
+}
 
 static void enviar_trama(uint8_t comando, uint8_t jugador,
                          uint8_t resultado, uint8_t barco)
@@ -28,52 +106,38 @@ static void enviar_trama(uint8_t comando, uint8_t jugador,
 
 void MARCADOR_receptor_procesar(void)
 {
-    static uint8_t trama[5];
-    static uint8_t posicion;
+    uint8_t trama[5];
 
-    while (HAL_UART_CC_data_available())
+    while (ENLACE_recibir_trama(trama))
     {
-        uint8_t byte = HAL_UART_CC_rx_byte();
-        if (posicion == 0)
-        {
-            if (byte == MARCADOR_INICIO_TRAMA)
-                trama[posicion++] = byte;
-            continue;
-        }
+        uint8_t comando = trama[1];
+        uint8_t jugador = trama[2];
+        uint8_t resultado = trama[3];
+        uint8_t barco = trama[4];
 
-        trama[posicion++] = byte;
-        if (posicion == sizeof(trama))
+        if (jugador < 2)
         {
-            uint8_t comando = trama[1];
-            uint8_t jugador = trama[2];
-            uint8_t resultado = trama[3];
-            uint8_t barco = trama[4];
-
-            if (jugador < 2)
+            switch (comando)
             {
-                switch (comando)
-                {
-                case CMD_INICIO:
-                    marcador();
-                    break;
-                case CMD_TURNO:
-                    dibujar_turno(jugador);
-                    break;
-                case CMD_DISPARO:
-                    if (resultado == RES_AGUA)
-                        registrar_contador(jugador, 2);
-                    else if ((resultado == RES_TOCADO || resultado == RES_HUNDIDO)
-                             && barco < 5)
-                        barco_tocado(jugador, barco);
-                    break;
-                case CMD_FIN:
-                    /* La pantalla actual no tiene una vista de fin de partida. */
-                    break;
-                default:
-                    break;
-                }
+            case CMD_INICIO:
+                marcador();
+                break;
+            case CMD_TURNO:
+                dibujar_turno(jugador);
+                break;
+            case CMD_DISPARO:
+                if (resultado == RES_AGUA)
+                    registrar_contador(jugador, 2);
+                else if ((resultado == RES_TOCADO || resultado == RES_HUNDIDO)
+                         && barco < 5)
+                    barco_tocado(jugador, barco);
+                break;
+            case CMD_FIN:
+                /* La pantalla actual no tiene una vista de fin de partida. */
+                break;
+            default:
+                break;
             }
-            posicion = 0;
         }
     }
 }
