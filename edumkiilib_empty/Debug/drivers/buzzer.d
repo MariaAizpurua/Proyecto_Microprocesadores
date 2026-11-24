@@ -12,6 +12,8 @@ drivers/buzzer.obj: C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/in
 drivers/buzzer.obj: C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/machine/_types.h
 drivers/buzzer.obj: C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/machine/_stdint.h
 drivers/buzzer.obj: C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/sys/_stdint.h
+drivers/buzzer.obj: ../drivers/buzzer.h
+drivers/buzzer.obj: C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/stdbool.h
 
 ../drivers/buzzer.c:
 
@@ -36,4 +38,8 @@ C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/machine/_types
 C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/machine/_stdint.h:
 
 C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/sys/_stdint.h:
+
+../drivers/buzzer.h:
+
+C:/ti/ccs1200/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/stdbool.h:
 

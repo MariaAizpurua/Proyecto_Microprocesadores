@@ -3,6 +3,10 @@
 #include <stdint.h>
 
 void marcador(void);
+void marcador_reiniciar_estadisticas(void);
+void marcador_mostrar_estadisticas(void);
+void marcador_registrar_agua(uint8_t jugador);
+void marcador_registrar_tocado(uint8_t jugador, uint8_t barco);
 void dibujar_turno(uint8_t jugador);
 void dibujar_contador(uint8_t jugador,uint8_t tipo,uint8_t valor);
 void registrar_contador(uint8_t jugador,uint8_t tipo);

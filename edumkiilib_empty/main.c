@@ -61,7 +61,7 @@
 
 /* Para una partida entre dos MSP430: compilar uno con 0 y el otro con 1. */
 #ifndef JUGADOR_LOCAL
-#define JUGADOR_LOCAL 1
+#define JUGADOR_LOCAL 0
 #endif
 
 /* 1 = tableros fijos (para probar rapido la radio sin colocar barcos),
@@ -74,6 +74,7 @@ Graphics_Context g_sContext;
 
 // Un tablero por jugador: tableros[jugador][fila y][columna x]
 static uint8_t tableros[2][FILAS_TABLERO][COLS_TABLERO];
+static bool musica_juego_activa;
 
 
 /* ------------------------------------------------------------------
@@ -116,6 +117,8 @@ static void tablero_de_prueba(uint8_t t[FILAS_TABLERO][COLS_TABLERO], uint8_t ju
 /* ------------------------------------------------------------------
  * Utilidades de pantalla
  * ------------------------------------------------------------------ */
+static void esperar_ms(uint16_t ms);
+
 static void pantalla_mensaje(const char *l1, const char *l2, const char *l3)
 {
     Graphics_setFont(&g_sContext, &g_sFontCm12);
@@ -130,6 +133,125 @@ static void pantalla_mensaje(const char *l1, const char *l2, const char *l3)
 static void esperar_S1(void)
 {
     while (!SWITCH_get_edumkii_S1());
+}
+
+static void dibujar_menu(uint8_t opcion, bool musica_activa)
+{
+    Graphics_setFont(&g_sContext, &g_sFontCm12);
+    Graphics_setBackgroundColor(&g_sContext, GRAPHICS_COLOR_WHITE);
+    Graphics_setForegroundColor(&g_sContext, GRAPHICS_COLOR_BLACK);
+    Graphics_clearDisplay(&g_sContext);
+    Graphics_drawStringCentered(&g_sContext, (int8_t *)"MENU", AUTO_STRING_LENGTH, 64, 17, false);
+    Graphics_drawStringCentered(&g_sContext,
+            (int8_t *)(opcion == 0 ? "> Estadisticas" : "  Estadisticas"),
+            AUTO_STRING_LENGTH, 64, 43, false);
+    Graphics_drawStringCentered(&g_sContext,
+            (int8_t *)(opcion == 1 ? (musica_activa ? "> Musica: ON" : "> Musica: OFF")
+                                  : (musica_activa ? "  Musica: ON" : "  Musica: OFF")),
+            AUTO_STRING_LENGTH, 64, 68, false);
+    Graphics_drawStringCentered(&g_sContext,
+            (int8_t *)(opcion == 2 ? "> Volver al juego" : "  Volver al juego"),
+            AUTO_STRING_LENGTH, 64, 93, false);
+    Graphics_drawStringCentered(&g_sContext, (int8_t *)"Joystick + S1", AUTO_STRING_LENGTH, 64, 116, false);
+}
+
+bool MENU_boton_pulsado(void)
+{
+    if (GPIO_getInputPinValue(GPIO_PORT_P5, GPIO_PIN5) != GPIO_INPUT_PIN_LOW)
+        return false;
+
+    esperar_ms(20);
+    if (GPIO_getInputPinValue(GPIO_PORT_P5, GPIO_PIN5) != GPIO_INPUT_PIN_LOW)
+        return false;
+
+    while (GPIO_getInputPinValue(GPIO_PORT_P5, GPIO_PIN5) == GPIO_INPUT_PIN_LOW)
+        esperar_ms(1);
+    esperar_ms(20);
+    return true;
+}
+
+static void mostrar_estadisticas_menu(void)
+{
+    marcador_mostrar_estadisticas();
+    Graphics_setFont(&g_sContext, &g_sFontFixed6x8);
+    Graphics_setForegroundColor(&g_sContext, ClrBlack);
+    Graphics_drawStringCentered(&g_sContext, (int8_t *)"S1: volver al menu",
+                                AUTO_STRING_LENGTH, 64, 118, TRANSPARENT_TEXT);
+    while (!SWITCH_get_edumkii_S1())
+        esperar_ms(1);
+    while (SWITCH_get_edumkii_S1())
+        esperar_ms(1);
+}
+
+void MENU_abrir(void)
+{
+    uint8_t opcion = 0;
+    float y;
+
+    dibujar_menu(opcion, musica_juego_activa);
+    while (1)
+    {
+        if (MENU_boton_pulsado())
+            return;
+
+        y = JOYSTICK_get_y();
+        if (y > 30)
+        {
+            opcion = (opcion + 2) % 3;
+            dibujar_menu(opcion, musica_juego_activa);
+            esperar_ms(200);
+        }
+        else if (y < -30)
+        {
+            opcion = (opcion + 1) % 3;
+            dibujar_menu(opcion, musica_juego_activa);
+            esperar_ms(200);
+        }
+
+        if (SWITCH_get_edumkii_S1())
+        {
+            while (SWITCH_get_edumkii_S1())
+                esperar_ms(1);
+
+            if (opcion == 0)
+                mostrar_estadisticas_menu();
+            else if (opcion == 1)
+            {
+                musica_juego_activa = !musica_juego_activa;
+                BUZ_music_set(musica_juego_activa);
+            }
+            else
+                return;
+
+            dibujar_menu(opcion, musica_juego_activa);
+        }
+        esperar_ms(1);
+    }
+}
+
+static void esperar_inicio_turno(void)
+{
+    pantalla_mensaje("Tu turno", "S1: elegir disparo", "P5.5: menu");
+    while (!SWITCH_get_edumkii_S1())
+    {
+        if (MENU_boton_pulsado())
+        {
+            MENU_abrir();
+            pantalla_mensaje("Tu turno", "S1: elegir disparo", "P5.5: menu");
+        }
+        esperar_ms(1);
+    }
+    while (SWITCH_get_edumkii_S1())
+        esperar_ms(1);
+}
+
+static void registrar_estadistica_disparo(uint8_t jugador, uint8_t resultado)
+{
+    if (resultado == RES_AGUA)
+        marcador_registrar_agua(jugador);
+    else if (resultado >= 1 && resultado <= 2 * NUM_BARCOS)
+        marcador_registrar_tocado(jugador,
+                (resultado > NUM_BARCOS ? resultado - NUM_BARCOS : resultado) - 1);
 }
 
 /* ------------------------------------------------------------------
@@ -171,7 +293,10 @@ static bool flota_hundida(uint8_t t[FILAS_TABLERO][COLS_TABLERO])
 static void esperar_ms(uint16_t ms)
 {
     while (ms--)
+    {
+        BUZ_music_tick(1);
         __delay_cycles(16000);
+    }
 }
 
 static bool recibir_trama_timeout(uint8_t trama[5], uint16_t timeout_ms)
@@ -373,10 +498,14 @@ static void esperar_disparo_rival(uint8_t jugador,
             uint8_t fila = trama[4] / COLS_TABLERO;
             uint8_t col = trama[4] % COLS_TABLERO;
             uint8_t resultado;
+            bool nuevo = !*hay_anterior || trama[3] != *seq_anterior ||
+                         trama[4] != *casilla_anterior;
             char mensaje[20];
 
             resultado = responder_disparo(trama, flota, hay_anterior, seq_anterior,
                                           casilla_anterior, resultado_anterior);
+            if (nuevo && resultado != RESULTADO_INVALIDO)
+                registrar_estadistica_disparo(trama[2], resultado);
             sprintf(mensaje, "Disparo en %c%d", 'A' + fila, col + 1);
             pantalla_mensaje(mensaje, resultado == RES_AGUA ? "Agua" : "Te han tocado", "Tu turno despues");
             esperar_ack_resultado(trama[2], trama[3], trama[4], resultado, flota,
@@ -393,6 +522,11 @@ static void mantener_pantalla_ganador(uint8_t jugador)
     uint8_t trama[5];
     while (1)
     {
+        if (MENU_boton_pulsado())
+        {
+            MENU_abrir();
+            pantalla_mensaje("Has ganado", "Flota rival hundida", "P5.5: menu");
+        }
         if (ENLACE_recibir_trama(trama) && trama[1] == CMD_RESULTADO &&
             trama[2] == jugador)
             ENLACE_enviar_ack_resultado(jugador, trama[3]);
@@ -504,6 +638,7 @@ void main(void)
 
     // Boton P5.6 de la LaunchPad (ver mi tablero), en vista_tablero.c
     vista_init();
+    GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P5, GPIO_PIN5);
 
     // Enable global interrupts
     __bis_SR_register(GIE);
@@ -595,6 +730,7 @@ void main(void)
             if (jugador > 1)
                 jugador = 0;
             memset(tableros, AGUA, sizeof(tableros));
+            marcador_reiniciar_estadisticas();
 
 #if USAR_TABLEROS_DE_PRUEBA
             tablero_de_prueba(tableros[jugador], jugador);
@@ -609,6 +745,7 @@ void main(void)
             {
                 if (turno_local)
                 {
+                    esperar_inicio_turno();
                     sprintf(linea, "Turno jugador %d", jugador + 1);
                     pantalla_mensaje(linea, "Elige una casilla", "P5.6: mi tablero");
 
@@ -627,6 +764,7 @@ void main(void)
                     if (resultado == RESULTADO_INVALIDO)
                         continue;
 
+                    registrar_estadistica_disparo(jugador, resultado);
                     actualizar_objetivo(tableros[1 - jugador], casilla, resultado);
                     if (resultado == RES_AGUA)
                         pantalla_mensaje("Agua", "", "Turno del rival");
@@ -638,7 +776,7 @@ void main(void)
 
                     if (flota_rival_hundida(tableros[1 - jugador]))
                     {
-                        pantalla_mensaje("Has ganado", "Flota rival hundida", "Reinicia ambas placas");
+                        pantalla_mensaje("Has ganado", "Flota rival hundida", "P5.5: menu");
                         mantener_pantalla_ganador(jugador);
                     }
                     turno_local = false;
@@ -652,8 +790,16 @@ void main(void)
 
                     if (flota_hundida(tableros[jugador]))
                     {
-                        pantalla_mensaje("Has perdido", "Tu flota hundida", "Reinicia ambas placas");
-                        while (1) { }
+                        pantalla_mensaje("Has perdido", "Tu flota hundida", "P5.5: menu");
+                        while (1)
+                        {
+                            if (MENU_boton_pulsado())
+                            {
+                                MENU_abrir();
+                                pantalla_mensaje("Has perdido", "Tu flota hundida", "P5.5: menu");
+                            }
+                            esperar_ms(1);
+                        }
                     }
                     turno_local = true;
                 }

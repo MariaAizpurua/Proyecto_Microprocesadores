@@ -12,6 +12,7 @@
 #include <grlib.h>
 #include "Pantalla_drw.h"
 #include <drivers/switch.h>
+#include <drivers/buzzer.h>
 #include <stdio.h>
 #include <msp430.h>
 #include "vista_tablero.h"
@@ -56,6 +57,10 @@ bool seleccionar_disparo(uint8_t tablero[10][10], uint8_t mi_tablero[10][10],
 
 
         while (!SWITCH_get_edumkii_S1()){
+            if (MENU_boton_pulsado()){
+                MENU_abrir();
+                redibujar_disparo(tablero, posX, posY, &rect);
+            }
             // P5.6 (LaunchPad): ver mi tablero y, al volver a pulsar, regresar
             if (vista_boton_pulsado()){
                 vista_mostrar_mi_tablero(&g_sContext, mi_tablero);
@@ -142,6 +147,7 @@ bool seleccionar_disparo(uint8_t tablero[10][10], uint8_t mi_tablero[10][10],
                     }
             }
             __delay_cycles(3200000);
+            BUZ_music_tick(200);
 
             if(JOYSTICK_get_y()>30){
                 if (posY>0){
@@ -224,6 +230,7 @@ bool seleccionar_disparo(uint8_t tablero[10][10], uint8_t mi_tablero[10][10],
 
             }
             __delay_cycles(3200000);
+            BUZ_music_tick(200);
 
 
         }

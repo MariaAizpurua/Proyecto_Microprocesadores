@@ -35,11 +35,7 @@ static void dibujar_casilla_vacia(uint8_t jugador,uint8_t barco,uint8_t pos){
     Graphics_drawRectangle(&g_sContext, &r);
 
 }
-void marcador(void){
-    // Reinicio: cada partida nueva empieza con los contadores a 0
-    memset(contador, 0, sizeof(contador));
-    memset(barcos, 0, sizeof(barcos));
-
+void marcador_mostrar_estadisticas(void){
     Graphics_setForegroundColor(&g_sContext, ClrBlack);
     Graphics_setBackgroundColor(&g_sContext, ClrWhite);
     Graphics_clearDisplay(&g_sContext);
@@ -65,12 +61,26 @@ void marcador(void){
         for (b = 0; b < 5; b++){
             for (p = 0; p < tamano_barco[b]; p++){
                 dibujar_casilla_vacia(j, b, p);
+                if (p < barcos[j][b])
+                    dibujar_barco_tocado(j, b, p);
             }
         }
+        for (b = 0; b < 3; b++)
+            dibujar_contador(j, b, contador[j][b]);
     }
 
 
 
+}
+
+void marcador_reiniciar_estadisticas(void){
+    memset(contador, 0, sizeof(contador));
+    memset(barcos, 0, sizeof(barcos));
+}
+
+void marcador(void){
+    marcador_reiniciar_estadisticas();
+    marcador_mostrar_estadisticas();
 }
 
 void dibujar_turno(uint8_t jugador){
@@ -111,6 +121,10 @@ void registrar_contador(uint8_t jugador,uint8_t tipo){
 
 }
 
+void marcador_registrar_agua(uint8_t jugador){
+    contador[jugador][2]++;
+}
+
 void dibujar_barco_tocado(uint8_t jugador,uint8_t barco,uint8_t pos){
     int16_t x,y;
 
@@ -138,4 +152,11 @@ void barco_tocado(uint8_t jugador,uint8_t barco){
 
     }
 
+}
+
+void marcador_registrar_tocado(uint8_t jugador,uint8_t barco){
+    uint8_t tamano = tamano_barco[barco];
+    uint8_t progreso = barcos[jugador][barco];
+    barcos[jugador][barco]++;
+    contador[jugador][progreso + 1 == tamano ? 1 : 0]++;
 }
