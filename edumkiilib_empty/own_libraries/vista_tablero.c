@@ -3,6 +3,7 @@
 #include <msp430.h>
 #include <driverlib.h>
 #include <drivers/joystick.h>
+#include <drivers/buzzer.h>
 
 /* Convencion de ejes: x = columna, y = fila, matriz[y][x].
  * Ver vista_tablero.h. */
@@ -253,7 +254,8 @@ void vista_mostrar_mi_tablero(Graphics_Context *g,
             vista_mover_cursor(g, matriz, x, y, nx, ny);
             x = nx;
             y = ny;
-            __delay_cycles(RETARDO_JOYSTICK);
+            BUZ_wait_ms(200);
         }
+        BUZ_wait_ms(1);
     }
 }

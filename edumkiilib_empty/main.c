@@ -55,6 +55,7 @@
 //Own libraries
 #include <own_libraries/Pantalla_drw.h>
 #include <own_libraries/Place_ship.h>
+#include <own_libraries/estilo_militar.h>
 
 /* Compilar con 0 en la placa de juego y con 1 en la placa marcador. */
 #define MODO_MARCADOR 0
@@ -67,6 +68,9 @@
 /* 1 = tableros fijos (para probar rapido la radio sin colocar barcos),
  * 0 = cada jugador coloca sus barcos con Place_ship. */
 #define USAR_TABLEROS_DE_PRUEBA 0
+
+/* Tiempo que se ve la pantalla de Agua / Tocado / Hundido */
+#define MS_PANTALLA_RESULTADO 2500
 
 
 // Global variables
@@ -119,40 +123,16 @@ static void tablero_de_prueba(uint8_t t[FILAS_TABLERO][COLS_TABLERO], uint8_t ju
  * ------------------------------------------------------------------ */
 static void esperar_ms(uint16_t ms);
 
+/* Pantallas intermedias con estilo militar (ver estilo_militar.c) */
 static void pantalla_mensaje(const char *l1, const char *l2, const char *l3)
 {
-    Graphics_setFont(&g_sContext, &g_sFontCm12);
-    Graphics_setBackgroundColor(&g_sContext, GRAPHICS_COLOR_WHITE);
-    Graphics_setForegroundColor(&g_sContext, GRAPHICS_COLOR_BLACK);
-    Graphics_clearDisplay(&g_sContext);
-    Graphics_drawStringCentered(&g_sContext, (int8_t *)l1, AUTO_STRING_LENGTH, 64, 35, false);
-    Graphics_drawStringCentered(&g_sContext, (int8_t *)l2, AUTO_STRING_LENGTH, 64, 60, false);
-    Graphics_drawStringCentered(&g_sContext, (int8_t *)l3, AUTO_STRING_LENGTH, 64, 95, false);
+    pantalla_militar(l1, l2, l3, ESTILO_NORMAL);
 }
 
 static void esperar_S1(void)
 {
-    while (!SWITCH_get_edumkii_S1());
-}
-
-static void dibujar_menu(uint8_t opcion, bool musica_activa)
-{
-    Graphics_setFont(&g_sContext, &g_sFontCm12);
-    Graphics_setBackgroundColor(&g_sContext, GRAPHICS_COLOR_WHITE);
-    Graphics_setForegroundColor(&g_sContext, GRAPHICS_COLOR_BLACK);
-    Graphics_clearDisplay(&g_sContext);
-    Graphics_drawStringCentered(&g_sContext, (int8_t *)"MENU", AUTO_STRING_LENGTH, 64, 17, false);
-    Graphics_drawStringCentered(&g_sContext,
-            (int8_t *)(opcion == 0 ? "> Estadisticas" : "  Estadisticas"),
-            AUTO_STRING_LENGTH, 64, 43, false);
-    Graphics_drawStringCentered(&g_sContext,
-            (int8_t *)(opcion == 1 ? (musica_activa ? "> Musica: ON" : "> Musica: OFF")
-                                  : (musica_activa ? "  Musica: ON" : "  Musica: OFF")),
-            AUTO_STRING_LENGTH, 64, 68, false);
-    Graphics_drawStringCentered(&g_sContext,
-            (int8_t *)(opcion == 2 ? "> Volver al juego" : "  Volver al juego"),
-            AUTO_STRING_LENGTH, 64, 93, false);
-    Graphics_drawStringCentered(&g_sContext, (int8_t *)"Joystick + S1", AUTO_STRING_LENGTH, 64, 116, false);
+    while (!SWITCH_get_edumkii_S1())
+        esperar_ms(1);
 }
 
 bool MENU_boton_pulsado(void)
@@ -185,26 +165,27 @@ static void mostrar_estadisticas_menu(void)
 
 void MENU_abrir(void)
 {
-    uint8_t opcion = 0;
+    uint8_t opcion = 0, anterior;
     float y;
 
-    dibujar_menu(opcion, musica_juego_activa);
+    menu_militar_dibujar(opcion, musica_juego_activa);
     while (1)
     {
         if (MENU_boton_pulsado())
             return;
 
         y = JOYSTICK_get_y();
-        if (y > 30)
+        if (y > 30 || y < -30)
         {
-            opcion = (opcion + 2) % 3;
-            dibujar_menu(opcion, musica_juego_activa);
-            esperar_ms(200);
-        }
-        else if (y < -30)
-        {
-            opcion = (opcion + 1) % 3;
-            dibujar_menu(opcion, musica_juego_activa);
+            anterior = opcion;
+            if (y > 30)
+                opcion = (opcion + MENU_NUM_OPCIONES - 1) % MENU_NUM_OPCIONES;
+            else
+                opcion = (opcion + 1) % MENU_NUM_OPCIONES;
+
+            /* Solo se redibujan las dos placas que cambian */
+            menu_militar_placa(anterior, false, musica_juego_activa);
+            menu_militar_placa(opcion, true, musica_juego_activa);
             esperar_ms(200);
         }
 
@@ -214,16 +195,18 @@ void MENU_abrir(void)
                 esperar_ms(1);
 
             if (opcion == 0)
+            {
                 mostrar_estadisticas_menu();
+                menu_militar_dibujar(opcion, musica_juego_activa);
+            }
             else if (opcion == 1)
             {
                 musica_juego_activa = !musica_juego_activa;
                 BUZ_music_set(musica_juego_activa);
+                menu_militar_placa(opcion, true, musica_juego_activa);
             }
             else
                 return;
-
-            dibujar_menu(opcion, musica_juego_activa);
         }
         esperar_ms(1);
     }
@@ -507,10 +490,13 @@ static void esperar_disparo_rival(uint8_t jugador,
             if (nuevo && resultado != RESULTADO_INVALIDO)
                 registrar_estadistica_disparo(trama[2], resultado);
             sprintf(mensaje, "Disparo en %c%d", 'A' + fila, col + 1);
-            pantalla_mensaje(mensaje, resultado == RES_AGUA ? "Agua" : "Te han tocado", "Tu turno despues");
+            pantalla_militar(mensaje, resultado == RES_AGUA ? "Agua" : "Te han tocado",
+                             "Tu turno despues",
+                             resultado == RES_AGUA ? ESTILO_AGUA : ESTILO_TOCADO);
             esperar_ack_resultado(trama[2], trama[3], trama[4], resultado, flota,
                                   hay_anterior, seq_anterior, casilla_anterior,
                                   resultado_anterior);
+            esperar_ms(MS_PANTALLA_RESULTADO);   /* que de tiempo a leerlo */
             return;
         }
     }
@@ -525,7 +511,7 @@ static void mantener_pantalla_ganador(uint8_t jugador)
         if (MENU_boton_pulsado())
         {
             MENU_abrir();
-            pantalla_mensaje("Has ganado", "Flota rival hundida", "P5.5: menu");
+            pantalla_militar("Has ganado", "Flota rival hundida", "P5.5: menu", ESTILO_GANADO);
         }
         if (ENLACE_recibir_trama(trama) && trama[1] == CMD_RESULTADO &&
             trama[2] == jugador)
@@ -767,16 +753,16 @@ void main(void)
                     registrar_estadistica_disparo(jugador, resultado);
                     actualizar_objetivo(tableros[1 - jugador], casilla, resultado);
                     if (resultado == RES_AGUA)
-                        pantalla_mensaje("Agua", "", "Turno del rival");
+                        pantalla_militar("Agua", "", "Turno del rival", ESTILO_AGUA);
                     else if (resultado <= NUM_BARCOS)
-                        pantalla_mensaje("Tocado", "", "Turno del rival");
+                        pantalla_militar("Tocado", "", "Turno del rival", ESTILO_TOCADO);
                     else
-                        pantalla_mensaje("Hundido", "", "Turno del rival");
-                    esperar_ms(1200);
+                        pantalla_militar("Hundido", "", "Turno del rival", ESTILO_HUNDIDO);
+                    esperar_ms(MS_PANTALLA_RESULTADO);
 
                     if (flota_rival_hundida(tableros[1 - jugador]))
                     {
-                        pantalla_mensaje("Has ganado", "Flota rival hundida", "P5.5: menu");
+                        pantalla_militar("Has ganado", "Flota rival hundida", "P5.5: menu", ESTILO_GANADO);
                         mantener_pantalla_ganador(jugador);
                     }
                     turno_local = false;
@@ -790,13 +776,13 @@ void main(void)
 
                     if (flota_hundida(tableros[jugador]))
                     {
-                        pantalla_mensaje("Has perdido", "Tu flota hundida", "P5.5: menu");
+                        pantalla_militar("Has perdido", "Tu flota hundida", "P5.5: menu", ESTILO_PERDIDO);
                         while (1)
                         {
                             if (MENU_boton_pulsado())
                             {
                                 MENU_abrir();
-                                pantalla_mensaje("Has perdido", "Tu flota hundida", "P5.5: menu");
+                                pantalla_militar("Has perdido", "Tu flota hundida", "P5.5: menu", ESTILO_PERDIDO);
                             }
                             esperar_ms(1);
                         }

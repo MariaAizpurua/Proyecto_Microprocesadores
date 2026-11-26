@@ -61,6 +61,7 @@
 "./own_libraries/Pantalla_drw.obj"
 "./own_libraries/Place_ship.obj"
 "./own_libraries/enlace_marcador.obj"
+"./own_libraries/estilo_militar.obj"
 "./own_libraries/interfaz_jugar.obj"
 "./own_libraries/pantalla_marcador.obj"
 "./own_libraries/vista_tablero.obj"

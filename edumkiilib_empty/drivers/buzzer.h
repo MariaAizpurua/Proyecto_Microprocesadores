@@ -35,6 +35,10 @@ void BUZ_sound_off();
 void BUZ_music_set(bool enabled);
 void BUZ_music_tick(uint16_t elapsed_ms);
 
+/* Espera ms milisegundos (a 16 MHz) sin parar la musica. Usar en lugar
+ * de __delay_cycles en los bucles de espera. */
+void BUZ_wait_ms(uint16_t ms);
+
 #ifdef __cplusplus
 }
 #endif

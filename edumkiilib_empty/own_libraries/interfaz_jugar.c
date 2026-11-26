@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <msp430.h>
 #include "vista_tablero.h"
+#include "estilo_militar.h"
 
 extern Graphics_Context g_sContext;
 
@@ -146,8 +147,7 @@ bool seleccionar_disparo(uint8_t tablero[10][10], uint8_t mi_tablero[10][10],
                         Graphics_fillRectangle(&g_sContext, &rect);
                     }
             }
-            __delay_cycles(3200000);
-            BUZ_music_tick(200);
+            BUZ_wait_ms(200);
 
             if(JOYSTICK_get_y()>30){
                 if (posY>0){
@@ -229,8 +229,7 @@ bool seleccionar_disparo(uint8_t tablero[10][10], uint8_t mi_tablero[10][10],
                 }
 
             }
-            __delay_cycles(3200000);
-            BUZ_music_tick(200);
+            BUZ_wait_ms(200);
 
 
         }
@@ -238,19 +237,15 @@ bool seleccionar_disparo(uint8_t tablero[10][10], uint8_t mi_tablero[10][10],
         while (SWITCH_get_edumkii_S1());   // se queda aquí mientras S1 siga pulsado
 
 
-        Graphics_setBackgroundColor(&g_sContext, GRAPHICS_COLOR_BLUE);
-        Graphics_clearDisplay(&g_sContext);
-        Graphics_setForegroundColor(&g_sContext, GRAPHICS_COLOR_WHITE);
         char texto[32];
         sprintf(texto,"Disparar a %c%d ?", 'A'+posY, posX+1);
-        Graphics_drawStringCentered(&g_sContext,(int8_t*)texto, AUTO_STRING_LENGTH,64,30,false);
-        Graphics_drawStringCentered(&g_sContext,(int8_t*)"SW1: Confirmar", AUTO_STRING_LENGTH,64,50,false);
-        Graphics_drawStringCentered(&g_sContext,(int8_t*)"SW2: Cancelar", AUTO_STRING_LENGTH,64,70,false);
+        pantalla_militar_confirmar(texto, "CONFIRMA LA ORDEN");
 
         int s1, s2;
                 do {
                     s1 = SWITCH_get_edumkii_S1();
                     s2 = SWITCH_get_edumkii_S2();
+                    BUZ_wait_ms(1);
                 } while (!s1 && !s2);
 
                 if (s2) {                                 // cancelar
@@ -260,12 +255,9 @@ bool seleccionar_disparo(uint8_t tablero[10][10], uint8_t mi_tablero[10][10],
             while (SWITCH_get_edumkii_S1());
             if (tablero[posY][posX] != 0)
             {
-                Graphics_clearDisplay(&g_sContext);
-                Graphics_drawStringCentered(&g_sContext,(int8_t*)"Ya disparaste ahi",
-                                            AUTO_STRING_LENGTH,64,35,false);
-                Graphics_drawStringCentered(&g_sContext,(int8_t*)"Elige otra casilla",
-                                            AUTO_STRING_LENGTH,64,55,false);
-                __delay_cycles(16000000);
+                pantalla_militar("Ya disparaste ahi", "Elige otra casilla",
+                                 "", ESTILO_AVISO);
+                BUZ_wait_ms(1500);
                 continue;
             }
 
