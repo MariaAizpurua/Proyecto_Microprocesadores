@@ -61,9 +61,7 @@
 #define MODO_MARCADOR 0
 
 /* Para una partida entre dos MSP430: compilar uno con 0 y el otro con 1. */
-#ifndef JUGADOR_LOCAL
 #define JUGADOR_LOCAL 0
-#endif
 
 /* 1 = tableros fijos (para probar rapido la radio sin colocar barcos),
  * 0 = cada jugador coloca sus barcos con Place_ship. */
