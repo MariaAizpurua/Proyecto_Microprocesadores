@@ -1,3 +1,8 @@
+/*
+ * rfEasyLinkRx_nortos.c
+ * Prueba de recepcion radio a UART para CC1310.
+ */
+
 #include <stdint.h>
 #include <unistd.h>
 
@@ -69,7 +74,7 @@ void *mainThread(void *arg0)
         if (EasyLink_receive(&packet) == EasyLink_Status_Success &&
             packet.len == FRAME_SIZE && packet.payload[0] == FRAME_START)
         {
-            /* Keep exactly the existing five-byte MSP430 marker protocol. */
+            /* Reenvia la trama de cinco bytes del protocolo del juego. */
             if (UART_write(uart, packet.payload, FRAME_SIZE) != FRAME_SIZE)
                 stop_on_error();
 

@@ -1,38 +1,8 @@
 /*
  * rfEasyLinkTrx_nortos.c
- *
- * Puente BIDIRECCIONAL UART <-> radio (864,5 MHz). El MISMO programa se
- * graba en los dos CC1310:
- *
- *   MSP430 --UART--> CC1310 ~~radio~~> CC1310 --UART--> MSP430
- *   MSP430 <--UART-- CC1310 <~~radio~~ CC1310 <--UART-- MSP430
- *
- * Funcionamiento:
- *   - La radio esta siempre escuchando en segundo plano
- *     (EasyLink_receiveAsync).
- *   - Cuando el MSP430 manda una trama completa por la UART, se corta la
- *     escucha, se transmite por radio y se vuelve a escuchar.
- *   - Cuando llega una trama por radio, se pasa tal cual al MSP430.
- *
- * Trama: siempre 5 bytes y el primero 0xAA (ver enlace_marcador.h). El
- * puente no mira lo que significa: cualquier trama 0xAA + 4 bytes pasa.
- *
- * Cableado (en cada pareja MSP430 + CC1310, GND comun):
- *   MSP430 P6.0 (TX) -> CC1310 DIO2 (RXD)
- *   MSP430 P6.1 (RX) <- CC1310 DIO3 (TXD)
- *   En la fila de jumpers: quitar RXD y TXD y usar el pin del lado
- *   CONTRARIO al USB (el del lado USB va al XDS110, no al CC1310).
- *
- * LEDs:
- *   verde  se enciende cuando la radio esta lista; despues CAMBIA con cada
- *          trama que llega por radio y se pasa al MSP430
- *   rojo   CAMBIA con cada trama del MSP430 que se envia por radio
- *   rojo parpadeando rapido = error al configurar la UART o la radio
- *
- * Limitacion: si las dos placas transmiten exactamente a la vez, esas
- * tramas se pierden (no hay confirmacion ni reintento). En un juego por
- * turnos es muy raro.
+ * Puente bidireccional UART y radio para CC1310.
  */
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>

@@ -1,8 +1,7 @@
 /*
  * Pantalla_drw.h
- *
- *  Created on: 9 nov. 2026
- *      Author: arodriguezd.5
+ * Interfaz para dibujar las vistas del tablero.
+ * Autor: arodriguezd.5.
  */
 
 #ifndef PANTALLA_DRW_H_

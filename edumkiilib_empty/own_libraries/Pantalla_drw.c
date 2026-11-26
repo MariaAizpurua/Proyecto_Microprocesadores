@@ -1,8 +1,7 @@
 /*
  * Pantalla_drw.c
- *
- *  Created on: 9 nov. 2026
- *      Author: arodriguezd.5
+ * Dibujo de las vistas del tablero.
+ * Autor: arodriguezd.5.
  */
 
 #include "Pantalla_drw.h"

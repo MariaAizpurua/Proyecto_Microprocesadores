@@ -1,10 +1,6 @@
 /*
  * estilo_militar.h
- *
- * Pantallas con estilo militar para "Hundir la flota": menu (P5.5),
- * pantallas intermedias de mensaje y confirmacion de disparo.
- * El tablero, la colocacion de barcos y las estadisticas NO usan este
- * estilo.
+ * Interfaz de las pantallas y estilos del juego.
  */
 
 #ifndef ESTILO_MILITAR_H_

@@ -1,3 +1,8 @@
+/*
+ * rfEasyLinkTx_nortos.c
+ * Prueba de transmision UART a radio para CC1310.
+ */
+
 #include <stdbool.h>
 #include <stdint.h>
 

@@ -1,28 +1,27 @@
 /*
  * estilo_militar.c
- *
- * Pantallas con estilo militar para "Hundir la flota" (128x128):
- * menu (P5.5), pantallas intermedias y confirmacion de disparo.
- *
- *   +------------------------------+
- *   | ^^^   * TITULO *       ancla |  cabecera oscura con insignias
- *   | ^^^   - SUBTITULO -          |
- *   |==============================|  doble linea dorada
- *   |                              |  fondo de camuflaje con placas
- *   |   ...contenido...            |  remachadas (opciones o mensaje)
- *   |                              |
- *   |==============================|
- *   |       instruccion            |  pie
- *   +------------------------------+
- *
- * Nota: circle.c de grlib esta excluido del proyecto, asi que los circulos
- * (manchas de camuflaje, piloto, diana) se dibujan aqui con lineas.
+ * Dibujo del menu y de las pantallas de juego.
  */
 
 #include "estilo_militar.h"
 #include <grlib.h>
 
 extern Graphics_Context g_sContext;
+
+/*
+ * Distribucion de las pantallas (128 x 128):
+ *   +------------------------------+
+ *   | insignias   TITULO     ancla | cabecera oscura
+ *   |         - subtitulo -        |
+ *   |==============================| lineas doradas
+ *   |                              |
+ *   |       contenido / placas     | fondo camuflado
+ *   |                              |
+ *   |==============================|
+ *   |         instruccion          | pie
+ *   +------------------------------+
+ * Los circulos se dibujan con lineas porque circle.c de GRLIB no se compila.
+ */
 
 /* ---------------- Paleta ---------------- */
 #define C_FONDO       0x3B4A2AUL   /* verde oliva */

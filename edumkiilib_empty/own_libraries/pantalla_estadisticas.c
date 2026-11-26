@@ -1,10 +1,18 @@
-#include "pantalla_marcador.h"
+/*
+ * pantalla_estadisticas.c
+ * Registro y dibujo de estadisticas locales.
+ * Autora: Irene.
+ */
+
+#include "pantalla_estadisticas.h"
 #include <msp430.h>
 #include <driverlib.h>
 #include <stdbool.h>
 #include <grlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <own_libraries/enlace_juego.h>
+#include <own_libraries/tablero.h>
 extern Graphics_Context g_sContext;
 
 #define Y_Separacion_turno 11
@@ -19,6 +27,9 @@ extern Graphics_Context g_sContext;
 static uint8_t contador[2][3];
 static const uint8_t tamano_barco[5]={2,3,3,4,5};
 static uint8_t barcos[2][5];
+
+static void dibujar_casilla_tocada(uint8_t jugador, uint8_t barco, uint8_t pos);
+static void dibujar_contador_estadisticas(uint8_t jugador, uint8_t tipo, uint8_t valor);
 
 static void dibujar_casilla_vacia(uint8_t jugador,uint8_t barco,uint8_t pos){
     int16_t x,y;
@@ -35,7 +46,7 @@ static void dibujar_casilla_vacia(uint8_t jugador,uint8_t barco,uint8_t pos){
     Graphics_drawRectangle(&g_sContext, &r);
 
 }
-void marcador_mostrar_estadisticas(void){
+void ESTADISTICAS_mostrar(void){
     Graphics_setForegroundColor(&g_sContext, ClrBlack);
     Graphics_setBackgroundColor(&g_sContext, ClrWhite);
     Graphics_clearDisplay(&g_sContext);
@@ -62,39 +73,25 @@ void marcador_mostrar_estadisticas(void){
             for (p = 0; p < tamano_barco[b]; p++){
                 dibujar_casilla_vacia(j, b, p);
                 if (p < barcos[j][b])
-                    dibujar_barco_tocado(j, b, p);
+                    dibujar_casilla_tocada(j, b, p);
             }
         }
         for (b = 0; b < 3; b++)
-            dibujar_contador(j, b, contador[j][b]);
+            dibujar_contador_estadisticas(j, b, contador[j][b]);
     }
 
-
-
+    Graphics_setFont(&g_sContext, &g_sFontFixed6x8);
+    Graphics_setForegroundColor(&g_sContext, ClrBlack);
+    Graphics_drawStringCentered(&g_sContext, (int8_t *)"S1: volver al menu",
+                                AUTO_STRING_LENGTH, 64, 118, TRANSPARENT_TEXT);
 }
 
-void marcador_reiniciar_estadisticas(void){
+void ESTADISTICAS_reiniciar(void){
     memset(contador, 0, sizeof(contador));
     memset(barcos, 0, sizeof(barcos));
 }
 
-void marcador(void){
-    marcador_reiniciar_estadisticas();
-    marcador_mostrar_estadisticas();
-}
-
-void dibujar_turno(uint8_t jugador){
-    if (jugador == 0){
-        Graphics_drawStringCentered(&g_sContext, (int8_t *)"TURNO: PLAYER 1",
-                                    AUTO_STRING_LENGTH,64, 5, OPAQUE_TEXT);
-    }
-    else{
-        Graphics_drawStringCentered(&g_sContext, (int8_t *)"TURNO: PLAYER 2",
-                                    AUTO_STRING_LENGTH,64,5, OPAQUE_TEXT);
-    }
-}
-
-void dibujar_contador(uint8_t jugador,uint8_t tipo,uint8_t valor){
+static void dibujar_contador_estadisticas(uint8_t jugador,uint8_t tipo,uint8_t valor){
     int16_t x,y;
     char texto[3];
 
@@ -115,17 +112,11 @@ void dibujar_contador(uint8_t jugador,uint8_t tipo,uint8_t valor){
 
 }
 
-void registrar_contador(uint8_t jugador,uint8_t tipo){
-    contador[jugador][tipo]++;
-  dibujar_contador(jugador,tipo,contador[jugador][tipo]);
-
-}
-
-void marcador_registrar_agua(uint8_t jugador){
+static void ESTADISTICAS_registrar_agua(uint8_t jugador){
     contador[jugador][2]++;
 }
 
-void dibujar_barco_tocado(uint8_t jugador,uint8_t barco,uint8_t pos){
+static void dibujar_casilla_tocada(uint8_t jugador,uint8_t barco,uint8_t pos){
     int16_t x,y;
 
     if(jugador==0){
@@ -141,22 +132,18 @@ void dibujar_barco_tocado(uint8_t jugador,uint8_t barco,uint8_t pos){
 
 }
 
-void barco_tocado(uint8_t jugador,uint8_t barco){
-    dibujar_barco_tocado(jugador,barco,barcos[jugador][barco]);
-    barcos[jugador][barco]++;
-    if(barcos[jugador][barco]==tamano_barco[barco]){
-        registrar_contador(jugador,1); //hundido
-    }
-    else{
-        registrar_contador(jugador,0);//tocado
-
-    }
-
-}
-
-void marcador_registrar_tocado(uint8_t jugador,uint8_t barco){
+static void ESTADISTICAS_registrar_tocado(uint8_t jugador,uint8_t barco){
     uint8_t tamano = tamano_barco[barco];
     uint8_t progreso = barcos[jugador][barco];
     barcos[jugador][barco]++;
     contador[jugador][progreso + 1 == tamano ? 1 : 0]++;
+}
+
+void ESTADISTICAS_registrar_resultado(uint8_t jugador, uint8_t resultado)
+{
+    if (resultado == RES_AGUA)
+        ESTADISTICAS_registrar_agua(jugador);
+    else if (resultado >= 1 && resultado <= 2 * NUM_BARCOS)
+        ESTADISTICAS_registrar_tocado(jugador,
+                (resultado > NUM_BARCOS ? resultado - NUM_BARCOS : resultado) - 1);
 }

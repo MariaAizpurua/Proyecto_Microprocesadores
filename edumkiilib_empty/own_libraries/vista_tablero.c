@@ -1,3 +1,8 @@
+/*
+ * vista_tablero.c
+ * Dibujo del tablero y movimiento del cursor.
+ */
+
 #include "vista_tablero.h"
 #include "Pantalla_drw.h"
 #include <msp430.h>

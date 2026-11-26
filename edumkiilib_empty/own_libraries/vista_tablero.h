@@ -1,3 +1,8 @@
+/*
+ * vista_tablero.h
+ * Interfaz de visualizacion del tablero.
+ */
+
 #ifndef VISTA_TABLERO_H_
 #define VISTA_TABLERO_H_
 

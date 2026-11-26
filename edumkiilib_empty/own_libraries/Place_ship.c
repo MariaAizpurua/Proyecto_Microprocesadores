@@ -1,63 +1,10 @@
 /*
  * Place_ship.c
- *
- *  Created on: 14 Nov 2026
- *      Author: jonxa
-*/
+ * Colocacion interactiva de cada barco.
+ * Autor: jonxa.
+ */
 
 #include "Place_ship.h"
-
-
-/*static void dibujar_corazon(Graphics_Context *g_sContext, int16_t cx, int16_t cy)
-{
-    int16_t i;
-
-    Graphics_fillCircle(g_sContext, cx - 2, cy, 2);
-    Graphics_fillCircle(g_sContext, cx + 2, cy, 2);
-
-    for (i = 0; i < 5; i++)
-    {
-        Graphics_drawLine(g_sContext, cx - (4 - i), cy + 1 + i,
-                                      cx + (4 - i), cy + 1 + i);
-    }
-}
-
-void pantalla_casilla_ocupada(Graphics_Context *g_sContext)
-{
-    Graphics_Rectangle marco_ext = {3, 3, 124, 124};
-    Graphics_Rectangle marco_int = {6, 6, 121, 121};
-
-    // Fondo rosa pastel clarito
-    Graphics_setBackgroundColor(g_sContext, 0xFFF0F5);
-    Graphics_clearDisplay(g_sContext);
-
-    // Marco doble rosa
-    Graphics_setForegroundColor(g_sContext, 0xFF69B4); // Rosa fuerte
-    Graphics_drawRectangle(g_sContext, &marco_ext);
-
-    Graphics_setForegroundColor(g_sContext, 0xFFB6C1); // Rosa bebe
-    Graphics_drawRectangle(g_sContext, &marco_int);
-
-    // Corazoncitos arriba y abajo
-    Graphics_setForegroundColor(g_sContext, 0xFF1493); // Fucsia
-    dibujar_corazon(g_sContext, 22, 18);
-    dibujar_corazon(g_sContext, 105, 18);
-    dibujar_corazon(g_sContext, 64, 108);
-
-    // Texto en morado dulce con buen contraste
-    Graphics_setFont(g_sContext, &g_sFontCm12);
-    Graphics_setForegroundColor(g_sContext, 0x8B1C62);
-
-    Graphics_drawStringCentered(g_sContext, (int8_t *)"~ Ups! ~",           AUTO_STRING_LENGTH, 64, 21, false);
-    Graphics_drawStringCentered(g_sContext, (int8_t *)"Alguna casilla ya",  AUTO_STRING_LENGTH, 64, 44, false);
-    Graphics_drawStringCentered(g_sContext, (int8_t *)"ha sido ocupada,",   AUTO_STRING_LENGTH, 64, 59, false);
-    Graphics_drawStringCentered(g_sContext, (int8_t *)"por favor, intente", AUTO_STRING_LENGTH, 64, 74, false);
-    Graphics_drawStringCentered(g_sContext, (int8_t *)"otra posicion",      AUTO_STRING_LENGTH, 64, 89, false);
-
-    // Restaura el fondo blanco para que el tablero no se quede rosa al volver
-    Graphics_setBackgroundColor(g_sContext, GRAPHICS_COLOR_WHITE);
-}*/
-
 static void dibujar_alerta(Graphics_Context *g_sContext, int16_t cx, int16_t top_y)
 {
     int16_t i, w;
@@ -204,7 +151,7 @@ void place_ship_2(Graphics_Context *g_sContext, uint8_t info[10][10])
 
 
 
-                rect.xMin = 27 + 20 * pointer[0] - 19; // Rectángulo rojo
+                rect.xMin = 27 + 20 * pointer[0] - 19; // Rectangulo rojo
                 rect.xMax = 47 + 20 * pointer[0] - 1;
 
                 rect.yMax = 27 + 20 * pointer[1] + 1;
@@ -505,7 +452,7 @@ void place_ship_31(Graphics_Context *g_sContext, uint8_t info[10][10])
                 flg = false;
                 }
 
-                rect.xMin = 27 + 20 * pointer[0] - 39; // Rectángulo rojo
+                rect.xMin = 27 + 20 * pointer[0] - 39; // Rectangulo rojo
                 rect.xMax = 47 + 20 * pointer[0] - 1;
 
                 rect.yMax = 27 + 20 * pointer[1] + 1;
@@ -856,7 +803,7 @@ void place_ship_32(Graphics_Context *g_sContext, uint8_t info[10][10])
                 flg = false;
                 }
 
-                rect.xMin = 27 + 20 * pointer[0] - 39; // Rectángulo rojo
+                rect.xMin = 27 + 20 * pointer[0] - 39; // Rectangulo rojo
                 rect.xMax = 47 + 20 * pointer[0] - 1;
 
                 rect.yMax = 27 + 20 * pointer[1] + 1;
@@ -1207,7 +1154,7 @@ void place_ship_4(Graphics_Context *g_sContext, uint8_t info[10][10])
                 flg = false;
                 }
 
-                rect.xMin = 27 + 20 * pointer[0] - 59; // Rectángulo rojo
+                rect.xMin = 27 + 20 * pointer[0] - 59; // Rectangulo rojo
                 rect.xMax = 47 + 20 * pointer[0] - 1;
 
                 rect.yMax = 27 + 20 * pointer[1] + 1;
@@ -1560,7 +1507,7 @@ void place_ship_5(Graphics_Context *g_sContext, uint8_t info[10][10])
                 flg = false;
                 }
 
-                rect.xMin = 27 + 20 * pointer[0] - 79; // Rectángulo rojo
+                rect.xMin = 27 + 20 * pointer[0] - 79; // Rectangulo rojo
                 rect.xMax = 47 + 20 * pointer[0] - 1;
 
                 rect.yMax = 27 + 20 * pointer[1] + 1;

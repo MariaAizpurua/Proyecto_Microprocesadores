@@ -1,22 +1,6 @@
 /*
  * tablero.h
- *
- * Definiciones COMUNES del tablero, compartidas por todos los modulos
- * (interfaz_jugar, vista_tablero, place_ship, main...).
- *
- * Convencion de ejes:  x = columna (0..9), y = fila (0..9)
- *                      la matriz se accede SIEMPRE como tablero[y][x]
- *                      fila  -> letra  A..J
- *                      columna -> numero 1..10
- *
- * Codificacion de cada casilla (es la que usa disparar() en
- * interfaz_jugar.c, por eso es la que manda):
- *
- *    0        agua sin disparar
- *    1..5     barco sin tocar (el valor es el id del barco)
- *    6..10    barco tocado     (id del barco + 5)
- *    11       barco hundido    (todas sus casillas pasan a 11)
- *    12       bomba fallida    (disparo al agua)
+ * Constantes comunes y formato de la matriz del tablero.
  */
 
 #ifndef TABLERO_H_
@@ -26,6 +10,18 @@
 
 #define FILAS_TABLERO   10
 #define COLS_TABLERO    10
+
+/*
+ * Convencion: tablero[fila][columna], con fila 0..9 (A..J) y columna 0..9
+ * (1..10). Los identificadores de barco son BARCO_2..BARCO_5.
+ *
+ * Codificacion de una casilla:
+ *   0      agua sin disparar
+ *   1..5   barco intacto (el valor identifica el barco)
+ *   6..10  barco tocado (id del barco + OFFSET_TOCADO)
+ *   11     barco hundido (todas sus casillas pasan a este valor)
+ *   12     disparo al agua (BOMBA_FALLIDA)
+ */
 
 /* Estados de casilla */
 #define AGUA            0

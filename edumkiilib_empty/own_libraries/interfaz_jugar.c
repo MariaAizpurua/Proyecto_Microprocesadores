@@ -1,13 +1,11 @@
 /*
  * interfaz_jugar.c
- *
- *  Created on: 14 nov. 2026
- *      Author: maria
- *
- *
+ * Seleccion de disparos con el joystick.
+ * Autor: maria.
  */
 
 #include "interfaz_jugar.h"
+#include "menu_juego.h"
 #include <drivers/joystick.h>
 #include <grlib.h>
 #include "Pantalla_drw.h"
@@ -437,8 +435,3 @@ void marcar_casillas(uint8_t tablero[10][10],int cuadrante){
 
     }
 }
-
-
-
-
-

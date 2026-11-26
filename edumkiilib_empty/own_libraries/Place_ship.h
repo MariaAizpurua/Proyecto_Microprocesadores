@@ -1,8 +1,7 @@
 /*
  * Place_ship.h
- *
- *  Created on: 14 Nov 2026
- *      Author: jonxa
+ * Interfaz de colocacion interactiva de barcos.
+ * Autor: jonxa.
  */
 
 #ifndef HAL_PLACE_SHIP_H_
