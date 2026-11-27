@@ -1,4 +1,4 @@
-# 🚢 Hundir la Flota v1.0
+# 🚢💥 Hundir la Flota v1.0
 
 **Autores:** María Aizpurua, Irene Alberdi, Ander Rodríguez, Jon Xabin Urretabizkaia
 
