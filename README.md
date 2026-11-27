@@ -14,7 +14,7 @@ Este proyecto implementa el juego **Hundir la Flota** mediante un sistema de **c
 
 ---
 
-## 🛠️ Requisitos de Hardware
+## 🛠�?Requisitos de Hardware
 
 Para montar una partida completa (2 jugadores) se necesita por duplicado el siguiente equipamiento:
 * **2x** Placa de desarrollo `MSP-EXP430FR5994`
@@ -25,9 +25,9 @@ Para montar una partida completa (2 jugadores) se necesita por duplicado el sigu
 
 ## ⚙️ Configuración y carga del código
 
-### 1. Controlador principal (`Edumkiilib_empty`)
+### 1. Controlador principal (`Hundir_la_Flota`)
 
-El proyecto `Edumkiilib_empty` está preparado para compilarse y cargarse directamente en la placa **MSP-EXP430FR5994** con el módulo **BOOSTXL-EDUMKII**.
+El proyecto `Hundir_la_Flota` está preparado para compilarse y cargarse directamente en la placa **MSP-EXP430FR5994** con el módulo **BOOSTXL-EDUMKII**.
 
 * **Jugador 0:** Compilar y cargar el proyecto tal cual viene por defecto.
 * **Jugador 1:** Abrir el archivo `main.c`, ir a la **línea 64** y modificar la definición de `JUGADOR_LOCAL` de `0` a `1`. Posteriormente, compilar y cargar en un montaje de hardware idéntico al del Jugador 0.
